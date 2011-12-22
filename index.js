@@ -30,51 +30,33 @@ var worldCreator = function (world) {
 	};
 };
 
-var screenCreator = function (where, world, screen) {
-	var s = screenTypes[SCREEN_NUMBER][0]($(where), world, screen*2, screen*2);
-
-	return {
-		create: function (x1, y1, x2, y2) {
-			return s.create([], x1, y1, x2, y2);
-		},
-		cleanup: function () {
-			return s.cleanup();
-		}
-	};
-};
-
-var screenOps = function(where, world, screensize){
-
-		this._remove = function () {
-			if (typeof(this.sc) !== "undefined") {
-				this.sc.cleanup();
-			}
-		};
-
-		this.size = function (size) {
-			this._remove();
-			this.sc = screenCreator(where, world, size);
-			return this.sc.create(-size, -size, size, size);
-		};
-
-		this.move = function (x1, y1, x2, y2) {
-			this._remove();
-			return this.sc.create(x1, y1, x2, y2);
-		};
-
-	};
-
 $(function () {
-	var viewports = [new screenOps($("#gamearea1"), worldCreator(WORLD), SCREEN), new screenOps($("#gamearea2"), worldCreator(WORLD), SCREEN)], screen;
+	var viewports = [
+		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), SCREEN)
+		//new screenOps($("#gamearea2"), screenTypes[1][0], worldCreator(WORLD), SCREEN)
+		], screen;
 
 	var gen = function () {
 		//viewport.size(SCREEN);
-		screens = _(viewports).map(function (v) { return v.size(SCREEN); });
-		_(screens).each(function (screen) { screen.draw(draw); screen.console("WORLD: " + WORLD + " - SCREEN: " + SCREEN + " - CANVAS: " + screenTypes[SCREEN_NUMBER][1]);});
+		screens = _(viewports).map(function (v) {
+			return v.size(SCREEN);
+		});
+		_(screens).each(function (screen) {
+			screen.draw(draw);
+			screen.console("WORLD: " + WORLD + " - SCREEN: " + SCREEN);
+		});
 	};
 	
 	gen();
 
+	$.ajax({
+			url: 'out.json',
+			method: 'get',
+			data: {},
+			success: function(data) {
+				console.log("receveived: " + data);
+			}
+		});
 	KeyboardJS.bind.key("d", function () {
 		console.log("d pressed");
 		_(screens).each(function (screen) { screen.draw(draw); });
