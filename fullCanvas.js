@@ -14,12 +14,14 @@ renderlib.screens.fullCanvas = function(where, game,width,height) {
     $(where).width(width);
     $(where).height(height);
     
-    $(where).append("<canvas id=\"canvas\" width=\"" + game_width + "\" height=\"" + game_height + "\"></canvas></div>");
-    var ctx = $("#canvas")[0].getContext("2d"); // don't like the [0] subscript - some jQuery thing I don't understand?
+    var canvas = $("<canvas id=\"canvas\" width=\"" + game_width + "\" height=\"" + game_height + "\"></canvas></div>").appendTo($(where));
+    
+
+    var ctx = canvas[0].getContext("2d"); // don't like the [0] subscript - some jQuery thing I don't understand?
     
     return {
         cleanup: function() {
-            $("#canvas").remove();
+            canvas.remove();
             $(where).css("overflow", prev_gamescreen_scroll);
             $(where).width(prev_gamescreen_width);
             $(where).height(prev_gamescreen_height);
@@ -38,13 +40,11 @@ renderlib.screens.fullCanvas = function(where, game,width,height) {
             
             console.log("created full canvas viewport from " + x1 + "," + y2 + " extents: " + c2s.toString());
             return {
-                draw: function(textures) {
-                    renderlib.util.Timer.start("Sectordraw");
+                draw: function(d) {
+                    renderlib.util.Timer.start("FullCanvas");
                     
-                    renderlib.util.Timer.substart("patternPoly");
-                    for (var s = 0; s < sectors.length; s++) {
-                        //renderlib.renderutil.drawPoly(c2s, ctx, "sectors[s].label", sectors[s], "#0000ff");
-                    }
+                    renderlib.util.Timer.substart("Draw");
+                    d(c2s, ctx);
                     renderlib.util.Timer.subend();
                     
                     renderlib.util.Timer.end();
