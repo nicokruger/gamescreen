@@ -10,7 +10,9 @@ renderlib.screens.backingCanvas = function(where,game,width,height) {
     var canvas = $("<canvas class=\"gamecanvas\" width=\"" + width + "\" height=\"" + height + "\" />").appendTo($(where));
     var canvas_hidden = $("<canvas width=\"" + extents_width +"\" height=\"" + extents_height + "\" style=\"display:none\"/>").appendTo($(where));
 
-    var console = $('<div class="console2">AAAAAAAAAAAAAAAA</div>').appendTo($(where));
+    var console = $('<div class="console2"></div>').appendTo($(where));
+    console.width(width);
+    //console.height(height);
 
     var ctx_front = canvas[0].getContext("2d");
     var ctx_back = canvas_hidden[0].getContext("2d");
@@ -36,8 +38,7 @@ renderlib.screens.backingCanvas = function(where,game,width,height) {
                     renderlib.util.Timer.start("BackingCanvas");
 
                     renderlib.util.Timer.substart("clean back");
-                    ctx_back.fillStyle  = '#0000bb';
-                    ctx_back.fillRect(
+                    ctx_back.clearRect(
                         c2s.cartesian2screenx(x1),
                         c2s.cartesian2screeny(y1),
                         c2s.cartesian2screenx(x2) - c2s.cartesian2screenx(x1),
@@ -60,6 +61,10 @@ renderlib.screens.backingCanvas = function(where,game,width,height) {
                     renderlib.util.Timer.subend();
                     
                     renderlib.util.Timer.end();
+                },
+
+                console: function (html) {
+                    $(console).html(html);
                 }
             };
         }

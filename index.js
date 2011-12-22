@@ -12,7 +12,7 @@ var draw = function (c2s, ctx) {
     renderlib.util.grid(ctx, "rgb(255,255,255)", c2s, -WORLD, -WORLD, WORLD, WORLD, GRIDSIZE);
 };
 
-var screens = [
+var screenTypes = [
 	[renderlib.screens.backingCanvas, "Backing canvas"],
 	[renderlib.screens.fullCanvas, "Full canvas"]
 ];
@@ -30,8 +30,8 @@ var worldCreator = function (world) {
 	};
 };
 
-var screenCreator = function (world, screen) {
-	var s = screens[SCREEN_NUMBER][0]($("#gamearea"), world, screen*2, screen*2);
+var screenCreator = function (where, world, screen) {
+	var s = screenTypes[SCREEN_NUMBER][0]($(where), world, screen*2, screen*2);
 
 	return {
 		create: function (x1, y1, x2, y2) {
@@ -43,7 +43,7 @@ var screenCreator = function (world, screen) {
 	};
 };
 
-var screenOps = function(world, screensize){
+var screenOps = function(where, world, screensize){
 
 		this._remove = function () {
 			if (typeof(this.sc) !== "undefined") {
@@ -53,7 +53,7 @@ var screenOps = function(world, screensize){
 
 		this.size = function (size) {
 			this._remove();
-			this.sc = screenCreator(world, size);
+			this.sc = screenCreator(where, world, size);
 			return this.sc.create(-size, -size, size, size);
 		};
 
@@ -65,19 +65,19 @@ var screenOps = function(world, screensize){
 	};
 
 $(function () {
-	var viewport = new screenOps(worldCreator(WORLD), SCREEN), screen;
+	var viewports = [new screenOps($("#gamearea1"), worldCreator(WORLD), SCREEN), new screenOps($("#gamearea2"), worldCreator(WORLD), SCREEN)], screen;
+
 	var gen = function () {
 		//viewport.size(SCREEN);
-		screen = viewport.size(SCREEN);
-		$("#info").html("WORLD: " + WORLD + " - SCREEN: " + SCREEN + " - CANVAS: " + screens[SCREEN_NUMBER][1]);
-		screen.draw(draw);
+		screens = _(viewports).map(function (v) { return v.size(SCREEN); });
+		_(screens).each(function (screen) { screen.draw(draw); screen.console("WORLD: " + WORLD + " - SCREEN: " + SCREEN + " - CANVAS: " + screenTypes[SCREEN_NUMBER][1]);});
 	};
 	
 	gen();
 
 	KeyboardJS.bind.key("d", function () {
 		console.log("d pressed");
-		screen.draw(draw);
+		_(screens).each(function (screen) { screen.draw(draw); });
 	});
 
 	KeyboardJS.bind.key("i", function () {
