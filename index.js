@@ -1,15 +1,27 @@
 
 
-var WORLD = 2000;
+var WORLD = 800;
 var SCREEN = 200;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
 
+var polygons = [];
+
 var draw = function (c2s, ctx) {
 	var canvas = ctx.canvas;
     
-    renderlib.util.grid(ctx, "rgb(255,255,255)", c2s, -WORLD, -WORLD, WORLD, WORLD, GRIDSIZE);
+	renderlib.util.grid(ctx, "rgb(255,255,255)", c2s, -WORLD, -WORLD, WORLD, WORLD, GRIDSIZE);
+
+	/*for (var i = 0; i < polygons.length; i++) {
+		var polygon = polygons[i];
+		ctx.fillStyle = "rgba(" + polygon.color[0] + "," + polygon.color[1] + "," + polygon.color[2] + "," + polygon.color[3] + ")";
+		ctx.moveTo(c2s.cartesian2screenx(polygon.points[0][0]), c2s.cartesian2screeny(polygon.points[0][1]));
+		for (var j = 1; j < polygon.points.length; j++) {
+			ctx.lineTo(c2s.cartesian2screenx(polygon.points[j][0]), c2s.cartesian2screeny(polygon.points[j][1]));
+		}
+		ctx.fill();
+    }*/
 };
 
 var screenTypes = [
@@ -32,14 +44,14 @@ var worldCreator = function (world) {
 
 $(function () {
 	var viewports = [
-		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), SCREEN)
+		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), [512,512], SCREEN, SCREEN)
 		//new screenOps($("#gamearea2"), screenTypes[1][0], worldCreator(WORLD), SCREEN)
 		], screen;
 
 	var gen = function () {
 		//viewport.size(SCREEN);
 		screens = _(viewports).map(function (v) {
-			return v.size(SCREEN);
+			return v.size(SCREEN, SCREEN);
 		});
 		_(screens).each(function (screen) {
 			screen.draw(draw);
@@ -54,7 +66,14 @@ $(function () {
 			method: 'get',
 			data: {},
 			success: function(data) {
-				console.log("receveived: " + data);
+				console.log(data);
+				_(data.polys).each(function (poly) {
+					var _poly = {
+						points: _(poly.polygon).map(function (p) { return [Math.floor(p.x), Math.floor(p.y)]; }),
+						color: [poly.color.r, poly.color.g, poly.color.b, poly.color.a]
+					};
+					polygons.push(_poly);
+				});
 			}
 		});
 	KeyboardJS.bind.key("d", function () {

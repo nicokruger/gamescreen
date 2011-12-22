@@ -1,7 +1,7 @@
-var screenOps = function(where, type, world, screensize){
+var screenOps = function(where, type, world, centerpoint, width, height){
 
-	var screenCreator = function (where, type, world, screen) {
-		var s = type($(where), world, screen*2, screen*2);
+	var screenCreator = function (where, type, world, width, height) {
+		var s = type($(where), world, width, height);
 
 		return {
 			create: function (x1, y1, x2, y2) {
@@ -19,10 +19,10 @@ var screenOps = function(where, type, world, screensize){
 		}
 	};
 
-	this.size = function (size) {
+	this.size = function (width,height) {
 		this._remove();
-		this.sc = screenCreator(where, type, world, size);
-		return this.sc.create(-size, -size, size, size);
+		this.sc = screenCreator(where, type, world, width, height);
+		return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2);
 	};
 
 	this.move = function (x1, y1, x2, y2) {
