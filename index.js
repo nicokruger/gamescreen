@@ -1,27 +1,39 @@
 
 
 var WORLD = 800;
-var SCREEN = 200;
+var SCREEN = 800;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
 
 var polygons = [];
+var drawing = [0];
 
 var draw = function (c2s, ctx) {
 	var canvas = ctx.canvas;
     
 	renderlib.util.grid(ctx, "rgb(255,255,255)", c2s, -WORLD, -WORLD, WORLD, WORLD, GRIDSIZE);
 
-	/*for (var i = 0; i < polygons.length; i++) {
-		var polygon = polygons[i];
+	var drawPolygon = function (polygon) {
 		ctx.fillStyle = "rgba(" + polygon.color[0] + "," + polygon.color[1] + "," + polygon.color[2] + "," + polygon.color[3] + ")";
+		ctx.strokeStyle = "#00ff00";
+		ctx.beginPath();
 		ctx.moveTo(c2s.cartesian2screenx(polygon.points[0][0]), c2s.cartesian2screeny(polygon.points[0][1]));
 		for (var j = 1; j < polygon.points.length; j++) {
 			ctx.lineTo(c2s.cartesian2screenx(polygon.points[j][0]), c2s.cartesian2screeny(polygon.points[j][1]));
 		}
+		ctx.lineTo(c2s.cartesian2screenx(polygon.points[0][0]), c2s.cartesian2screeny(polygon.points[0][1]));
+		ctx.closePath();
+		ctx.stroke();
 		ctx.fill();
-    }*/
+	};
+
+	if (polygons.length > 0) {
+		_(drawing).each(function (i) {
+			console.log("Drawing " + i);
+			drawPolygon(polygons[i]);
+		});
+	}
 };
 
 var screenTypes = [
@@ -44,19 +56,29 @@ var worldCreator = function (world) {
 
 $(function () {
 	var viewports = [
-		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), [512,512], SCREEN, SCREEN)
+		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN)
 		//new screenOps($("#gamearea2"), screenTypes[1][0], worldCreator(WORLD), SCREEN)
 		], screen;
+
+	var drawAll = function () {
+		_(screens).each(function (screen) {
+			screen.draw(draw);
+			if (drawing.length < 5) {
+				screen.console("Drawing: " + drawing.join(","));
+			} else if (drawing.length == polygons.length) {
+				screen.console("Drawing all");
+			} else {
+				screen.console("Drawing many");
+			}
+		});
+	};
 
 	var gen = function () {
 		//viewport.size(SCREEN);
 		screens = _(viewports).map(function (v) {
 			return v.size(SCREEN, SCREEN);
 		});
-		_(screens).each(function (screen) {
-			screen.draw(draw);
-			screen.console("WORLD: " + WORLD + " - SCREEN: " + SCREEN);
-		});
+		drawAll();
 	};
 	
 	gen();
@@ -74,11 +96,14 @@ $(function () {
 					};
 					polygons.push(_poly);
 				});
+
+				gen();
 			}
 		});
+
 	KeyboardJS.bind.key("d", function () {
 		console.log("d pressed");
-		_(screens).each(function (screen) { screen.draw(draw); });
+		drawAll();
 	});
 
 	KeyboardJS.bind.key("i", function () {
@@ -99,6 +124,16 @@ $(function () {
 			SCREEN_NUMBER = 0;
 		}
 		gen();
+	});
+
+	KeyboardJS.bind.key("shift + dash", function () {
+		drawing[0] -= 1;
+		drawAll();
+	});
+
+	KeyboardJS.bind.key("shift + equal", function () {
+		drawing[0] += 1;
+		drawAll();
 	});
 });
 
