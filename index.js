@@ -15,10 +15,14 @@ var compositeTypes = [
 ];
 var currentComposite = 0;
 
+var grid = false;
+
 var draw = function (c2s, ctx) {
 	var canvas = ctx.canvas;
-    
-	renderlib.util.grid(ctx, "rgb(255,255,255)", c2s, -WORLD, -WORLD, WORLD, WORLD, GRIDSIZE);
+
+	if (grid) {
+		renderlib.util.grid(ctx, "rgb(30,30,30)", c2s, -WORLD, -WORLD, WORLD, WORLD, GRIDSIZE);
+	}
 
 	var drawPolygon = function (polygon) {
 		ctx.fillStyle = "rgba(" + polygon.color[0] + "," + polygon.color[1] + "," + polygon.color[2] + "," + polygon.color[3] + ")";
@@ -70,7 +74,7 @@ $(function () {
 		_(screens).each(function (screen) {
 			screen.draw(draw);
 			var t = "";
-			if (drawing.length < 5) {
+			if (drawing.length < 250) {
 				t = ("Drawing: " + drawing.join(","));
 			} else if (drawing.length == polygons.length) {
 				t = ("Drawing all");
@@ -102,14 +106,17 @@ $(function () {
 				_(data.polys).each(function (poly) {
 					var _poly = {
 						points: _(poly.polygon).map(function (p) { return [Math.floor(p.x), Math.floor(p.y)]; }),
-						color: [poly.color.r, poly.color.g, poly.color.b, poly.color.a]
+						color: [poly.color.r, poly.color.g, poly.color.b, poly.color.a/255.0]
 					};
 					polygons.push(_poly);
 					var x = $("<span></span>").appendTo($("#polys"));
 					$(x).html(" " + xx);
 					x.hover((function(w) {
 						return function () {
-							drawing.splice(0, drawing.length, 0);
+							var l = drawing.length;
+							for (var i = 0; i < l; i++) {
+								drawing.splice(0,1);
+							}
 							drawing.push(w);
 							drawAll();
 						};
@@ -147,12 +154,34 @@ $(function () {
 	});
 
 	KeyboardJS.bind.key("shift + equal", function () {
+		if (drawing.length != 1) {
+			var l = drawing.length;
+			for (var i = 0; i < l; i++) {
+				drawing.splice(0,1);
+			}
+			drawing = [0];
+		}
 		drawing[0] += 1;
 		drawAll();
 	});
 
+	KeyboardJS.bind.key("alt + shift + dash", function () {
+		drawing.splice(drawing.length-1,1);
+		drawAll();
+	});
+
+	KeyboardJS.bind.key("alt + shift + equal", function () {
+		if (drawing[drawing.length-1] !== undefined && drawing[drawing.length-1] + 1 < polygons.length) {
+			drawing.push(drawing[drawing.length-1] !== undefined ? drawing[drawing.length-1]+1 : 0);
+			drawAll();
+		}
+	});
+	
 	KeyboardJS.bind.key("c", function () {
-		drawing.splice(0, drawing.length, 0);
+		var l = drawing.length;
+		for (var i = 0; i < l; i++) {
+			drawing.splice(0,1);
+		}
 		drawAll();
 	});
 
@@ -161,6 +190,11 @@ $(function () {
 		for (var i = 0; i < polygons.length; i++) {
 			drawing.push(i);
 		}
+		drawAll();
+	});
+
+	KeyboardJS.bind.key("g", function () {
+		grid = !grid;
 		drawAll();
 	});
 	
@@ -188,7 +222,10 @@ $(function () {
 		drawAll();
 	});
 	$("#clear").click(function () {
-		drawing.splice(0, drawing.length, 0);
+		var l = drawing.length;
+		for (var i = 0; i < l; i++) {
+			drawing.splice(0,1);
+		}
 		drawAll();
 	});
 	$("#composition").change(function () {

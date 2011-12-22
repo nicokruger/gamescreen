@@ -39,7 +39,7 @@ renderlib.screens.backingCanvas = function(where,game,width,height) {
 
                     renderlib.util.Timer.substart("clean back");
                     ctx_back.globalCompositeOperation = "none";
-                    ctx_back.fillStyle = "#000088";
+                    ctx_back.fillStyle = "#ffffff";
                     ctx_back.fillRect(
                         c2s.cartesian2screenx(x1),
                         c2s.cartesian2screeny(y1),

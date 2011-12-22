@@ -84,7 +84,7 @@ renderlib.util = (function() {
         },
 
         grid: function (ctx, colour, c2s, x1, y1, x2, y2, size) {
-            ctx.fillStyle = "rgba(220, 220, 220, 1)";
+            ctx.fillStyle = "rgba(30, 30, 30, 1)";
             ctx.font = "normal 12px sans-serif";
 
             for (var x = x1; x<=x2-size; x+=size) {
