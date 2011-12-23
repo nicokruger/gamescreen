@@ -16,6 +16,7 @@ var compositeTypes = [
 var currentComposite = 0;
 
 var grid = false;
+var isDrawing = true;
 
 var draw = function (c2s, ctx) {
 	var canvas = ctx.canvas;
@@ -40,11 +41,12 @@ var draw = function (c2s, ctx) {
 	};
 
 	if (polygons.length > 0) {
-		_(drawing).each(function (i) {
-			console.log("Drawing " + i);
-			drawPolygon(polygons[i]);
-		});
+		for (var k = 0; k < drawing.length; k++) {
+			drawPolygon(polygons[drawing[k]]);
+		}
 	}
+
+
 };
 
 var screenTypes = [
@@ -71,19 +73,30 @@ $(function () {
 		], screen;
 
 	var drawAll = function () {
-		_(screens).each(function (screen) {
-			screen.draw(draw);
-			var t = "";
-			if (drawing.length < 250) {
-				t = ("Drawing: " + drawing.join(","));
-			} else if (drawing.length == polygons.length) {
-				t = ("Drawing all");
-			} else {
-				t = ("Drawing many");
-			}
-			t += " Composition: " + compositeTypes[currentComposite];
-			screen.console(t);
-		});
+		if (isDrawing) {
+			_(screens).each(function (screen) {
+				var t1 = Date.now();
+
+				screen.draw(draw);
+				var t = "";
+				if (drawing.length < 5) {
+					t = ("Drawing: " + drawing.join(","));
+				} else if (drawing.length >= polygons.length) {
+					t = ("Drawing all");
+				} else {
+					t = ("Drawing many");
+				}
+				t += " Composition: " + compositeTypes[currentComposite];
+
+				var t2 = Date.now();
+				screen.console("F: " + (t2-t1) + " - " + t);
+			});
+		} else {
+			_(screens).each(function (screen) {
+				screen.console("Paused");
+			});
+		}
+		window.requestAnimFrame(drawAll);
 	};
 
 	var gen = function () {
@@ -101,7 +114,6 @@ $(function () {
 			method: 'get',
 			data: {},
 			success: function(data) {
-				console.log(data);
 				var xx = 0;
 				_(data.polys).each(function (poly) {
 					var _poly = {
@@ -128,14 +140,16 @@ $(function () {
 			}
 		});
 
+	KeyboardJS.bind.key("d", function () {
+		isDrawing = !isDrawing;
+	});
+	
 	KeyboardJS.bind.key("i", function () {
-		console.log("i pressed");
 		SCREEN += 64;
 		gen();
 	});
 
 	KeyboardJS.bind.key("k", function () {
-		console.log("k pressed");
 		SCREEN -= 64;
 		gen();
 	});
@@ -145,12 +159,10 @@ $(function () {
 		if (SCREEN_NUMBER >= screens.length) {
 			SCREEN_NUMBER = 0;
 		}
-		gen();
 	});
 
 	KeyboardJS.bind.key("shift + dash", function () {
 		drawing[0] -= 1;
-		drawAll();
 	});
 
 	KeyboardJS.bind.key("shift + equal", function () {
@@ -162,12 +174,10 @@ $(function () {
 			drawing = [0];
 		}
 		drawing[0] += 1;
-		drawAll();
 	});
 
 	KeyboardJS.bind.key("shift + down", function () {
 		drawing.splice(drawing.length-1,1);
-		drawAll();
 	});
 
 	KeyboardJS.bind.key("shift + up", function () {
@@ -187,7 +197,6 @@ $(function () {
 		for (var i = 0; i < l; i++) {
 			drawing.splice(0,1);
 		}
-		drawAll();
 	});
 
 	KeyboardJS.bind.key("a", function () {
@@ -195,12 +204,10 @@ $(function () {
 		for (var i = 0; i < polygons.length; i++) {
 			drawing.push(i);
 		}
-		drawAll();
 	});
 
 	KeyboardJS.bind.key("g", function () {
 		grid = !grid;
-		drawAll();
 	});
 	
 	KeyboardJS.bind.key("alt + dash", function () {
@@ -208,7 +215,6 @@ $(function () {
 		if (currentComposite < 0 ) {
 			currentComposite = 0;
 		}
-		drawAll();
 	});
 
 	KeyboardJS.bind.key("alt + equal", function () {
@@ -216,7 +222,6 @@ $(function () {
 		if (currentComposite >= compositeTypes.length) {
 			currentComposite = 0;
 		}
-		drawAll();
 	});
 	
 	$("#all").click(function () {
@@ -224,19 +229,18 @@ $(function () {
 		for (var i = 0; i < polygons.length; i++) {
 			drawing.push(i);
 		}
-		drawAll();
 	});
 	$("#clear").click(function () {
 		var l = drawing.length;
 		for (var i = 0; i < l; i++) {
 			drawing.splice(0,1);
 		}
-		drawAll();
 	});
 	$("#composition").change(function () {
 		compositionOperation = $("#composition").val();
-		drawAll();
 	});
+
+	window.requestAnimFrame(drawAll);
 });
 
 
