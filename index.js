@@ -69,40 +69,46 @@ $(function () {
 		drawAll();
 	};
 	
-	$.ajax({
-			url: 'out.json',
-			method: 'get',
-			data: {},
-			success: function(data) {
-				var xx = 0;
+	var load = function (file) {
+		$.ajax({
+				url: file,
+				method: 'get',
+				data: {},
+				success: function(data) {
+					var xx = 0;
+					polygons = [];
 
-				_(data.polys).each(function (poly) {
-					var _poly = {
-						points: _(poly.polygon).map(function (p) { return [Math.floor(p.x), Math.floor(p.y)]; }),
-						color: [poly.color.r, poly.color.g, poly.color.b, poly.color.a/255.0]
-					};
-					polygons.push(_poly);
-					var x = $("<span></span>").appendTo($("#polys"));
-					$(x).html(" " + xx);
-					x.hover((function(w) {
-						return function () {
-							var l = drawing.length;
-							for (var i = 0; i < l; i++) {
-								drawing.splice(0,1);
-							}
-							drawing.push(w);
-							drawAll();
+					_(data.polys).each(function (poly) {
+
+						var _poly = {
+							points: _(poly.polygon).map(function (p) { return [Math.floor(p.x), Math.floor(p.y)]; }),
+							color: [poly.color.r, poly.color.g, poly.color.b, poly.color.a/255.0]
 						};
-						})(xx));
-					xx++;
-				});
-				drawing.splice(0, drawing.length, 0);
-				for (var i = 0; i < polygons.length; i++) {
-					drawing.push(i);
+						polygons.push(_poly);
+						var x = $("<span style=\"cursor: pointer\"></span>").appendTo($("#polys"));
+						$(x).html(" " + xx);
+						x.click((function(w) {
+							return function () {
+								var l = drawing.length;
+								for (var i = 0; i < l; i++) {
+									drawing.splice(0,1);
+								}
+								drawing.push(w);
+								drawAll();
+							};
+							})(xx));
+						xx++;
+					});
+					drawing.splice(0, drawing.length, 0);
+					for (var i = 0; i < polygons.length; i++) {
+						drawing.push(i);
+					}
+					gen();
 				}
-				gen();
-			}
 		});
+	};
+
+	load("doom.json");
 
 	KeyboardJS.bind.key("r", function () {
 		gen();
@@ -199,6 +205,10 @@ $(function () {
 	});
 	$("#composition").change(function () {
 		compositionOperation = $("#composition").val();
+	});
+
+	$("#file").change(function () {
+		load($("#file").val() + ".json");
 	});
 
 	window.requestAnimFrame(drawAll);

@@ -5,12 +5,12 @@ var movePoly = function (poly, offsetx, offsety) {
 	var test = { x: 0 };
 	//Tween.get(test).wait(100).to({x:50},1000).call(function () { alert("working"); });
 
-	var TP = Math.random() * 1000 + 1000;
+	var TP = Math.random() * 1000 + 3000;
 	//var TP = 4000;
 	newPoly.points = _(poly.points).map(function (p) {
 		var np = [p[0] + offsetx, p[1] + offsety];
 		
-		Tween.get(np).wait(1500).to({"0": p[0], "1" : p[1]}, TP, /*Ease.elasticIn*/ Ease.getPowIn(3));
+		Tween.get(np).wait(1500).to({"0": p[0], "1" : p[1]}, TP /*,Ease.elasticIn*/ /*Ease.getPowIn(3)*/);
 
 		return np;
 	});
