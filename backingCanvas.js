@@ -7,8 +7,8 @@ renderlib.screens.backingCanvas = function(where,game,width,height) {
     var extents_height = game.extents.y2 - game.extents.y1 + height;
     $(where).width(width);
     $(where).height(height);
-    var canvas = $("<canvas class=\"gamecanvas\" width=\"" + width + "\" height=\"" + height + "\" />").appendTo($(where));
-    var canvas_hidden = $("<canvas width=\"" + extents_width +"\" height=\"" + extents_height + "\" style=\"display:none\"/>").appendTo($(where));
+    var canvas = $("<canvas class=\"gamecanvas\" width=\"" + width + "\" height=\"" + height + "\"></canvas>").appendTo($(where));
+    var canvas_hidden = $("<canvas width=\"" + extents_width +"\" height=\"" + extents_height + "\" style=\"display:none\"></canvas>").appendTo($(where));
 
     var console = $('<div class="console2"></div>').appendTo($(where));
     console.width(width);
@@ -42,9 +42,9 @@ renderlib.screens.backingCanvas = function(where,game,width,height) {
                     ctx_back.fillStyle = "#ffffff";
                     ctx_back.fillRect(
                         c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y1),
-                        c2s.cartesian2screenx(x2) - c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y2) - c2s.cartesian2screeny(y1)
+                        c2s.cartesian2screeny(y2),
+                        width,
+                        height
                     );
                     renderlib.util.Timer.subend();
 
@@ -56,11 +56,12 @@ renderlib.screens.backingCanvas = function(where,game,width,height) {
                     ctx_back.globalCompositeOperation = "none";
                     ctx_front.drawImage(ctx_back.canvas,
                         c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y1),
-                        c2s.cartesian2screenx(x2) - c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y2) - c2s.cartesian2screeny(y1),
+                        c2s.cartesian2screeny(y2),
+                        width,
+                        height,
                         0, 0,
-                        width, height);
+                        width,
+                        height);
                     renderlib.util.Timer.subend();
                     
                     renderlib.util.Timer.end();

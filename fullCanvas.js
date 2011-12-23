@@ -44,13 +44,14 @@ renderlib.screens.fullCanvas = function(where, game,width,height) {
             return {
                 draw: function(d) {
                     renderlib.util.Timer.start("FullCanvas");
-                    ctx.clearRect(
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(
                         c2s.cartesian2screenx(x1),
                         c2s.cartesian2screeny(y1),
                         c2s.cartesian2screenx(x2) - c2s.cartesian2screenx(x1),
                         c2s.cartesian2screeny(y2) - c2s.cartesian2screeny(y1)
                     );
-
+                                        
                     renderlib.util.Timer.substart("Draw");
                     d(c2s, ctx);
                     renderlib.util.Timer.subend();
