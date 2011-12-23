@@ -165,12 +165,17 @@ $(function () {
 		drawAll();
 	});
 
-	KeyboardJS.bind.key("alt + shift + dash", function () {
+	KeyboardJS.bind.key("shift + down", function () {
 		drawing.splice(drawing.length-1,1);
 		drawAll();
 	});
 
-	KeyboardJS.bind.key("alt + shift + equal", function () {
+	KeyboardJS.bind.key("shift + up", function () {
+		if (drawing.length === 0) {
+			drawing.splice(0,1);
+			drawing.push(0);
+			return;
+		}
 		if (drawing[drawing.length-1] !== undefined && drawing[drawing.length-1] + 1 < polygons.length) {
 			drawing.push(drawing[drawing.length-1] !== undefined ? drawing[drawing.length-1]+1 : 0);
 			drawAll();
