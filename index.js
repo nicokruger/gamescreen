@@ -40,7 +40,8 @@ var worldCreator = function (world) {
 };
 
 var prev = undefined;
-var drawAll = function (x) {
+var drawAll = function () {
+	var x = Date.now();
 	var elapsed = 0;
 	if (prev === undefined) {
 		prev = x;
@@ -95,7 +96,10 @@ $(function () {
 						})(xx));
 					xx++;
 				});
-
+				drawing.splice(0, drawing.length, 0);
+				for (var i = 0; i < polygons.length; i++) {
+					drawing.push(i);
+				}
 				gen();
 			}
 		});

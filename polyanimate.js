@@ -1,14 +1,16 @@
 
-var movePoly = function (poly, offset) {
+var movePoly = function (poly, offsetx, offsety) {
 	var newPoly = {};
 
 	var test = { x: 0 };
 	//Tween.get(test).wait(100).to({x:50},1000).call(function () { alert("working"); });
 
+	var TP = Math.random() * 1000 + 1000;
+	//var TP = 4000;
 	newPoly.points = _(poly.points).map(function (p) {
-		var np = [p[0] + offset, p[1] + offset];
+		var np = [p[0] + offsetx, p[1] + offsety];
 		
-		Tween.get(np).wait(1000).to({"0": p[0], "1" : p[1]}, 500);
+		Tween.get(np).wait(1500).to({"0": p[0], "1" : p[1]}, TP, /*Ease.elasticIn*/ Ease.getPowIn(3));
 
 		return np;
 	});
@@ -19,8 +21,9 @@ var movePoly = function (poly, offset) {
 
 var jitterPolygons = function (polygons) {
 	return _(polygons).map(function (p) {
-		var r = Math.floor(Math.random() * 400);
-		return movePoly(p, r);
+		var x = Math.floor(-2000 + Math.random() * 4000);
+		var y = Math.floor(-2000 + Math.random() * 4000);
+		return movePoly(p, x, y);
 	});
 };
 
@@ -74,10 +77,9 @@ var createDrawer = function (polygons) {
 			t += " Composition: " + compositeTypes[currentComposite];
 
 			var t2 = Date.now();
-			screen.console("F: " + (t2-t1) + " - " + t);
-			console.log("E: " + elapsed);
+			screen.console("F: " + (t2-t1) + " - " + t + " E: " + elapsed);
 
-			Tween.tick(20, false);
+			Tween.tick(elapsed > 0 ? elapsed : 1, false);
 
 		} else {
 			screen.console("Paused");
