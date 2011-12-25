@@ -6,27 +6,25 @@ renderlib.screens.fullCanvas = function(where, game,width,height) {
     var game_width = game.extents.x2 - game.extents.x1 + width;
     var game_height = game.extents.y2 - game.extents.y1 + height;
     
-    var prev_gamescreen_width = $(where).width();
-    var prev_gamescreen_height = $(where).height();
-    var prev_gamescreen_scroll = $(where).css("overflow");
-    
-    $(where).css("overflow", "scroll");
     $(where).width(width);
-    $(where).height(height);
+    $(where).height(height + 60);
     
-    var canvas = $("<canvas width=\"" + game_width + "\" height=\"" + game_height + "\"></canvas></div>").appendTo($(where));
-    var console = $('<div class="console"></div>').appendTo($(where));
+    var holderdiv = $("<div></div>").appendTo(where);
+    holderdiv.width(width);
+    holderdiv.height(height);
+    holderdiv.css("overflow", "scroll");
+
+    var canvas = $("<canvas class=\"gamecanvas\" width=\"" + game_width + "\" height=\"" + game_height + "\"></canvas></div>").appendTo($(holderdiv));
+    
+    var console = $('<div class="console2"></div>').appendTo($(where));
     console.width(width);
     
-
     var ctx = canvas[0].getContext("2d"); // don't like the [0] subscript - some jQuery thing I don't understand?
     
     return {
         cleanup: function() {
             canvas.remove();
-            $(where).css("overflow", prev_gamescreen_scroll);
-            $(where).width(prev_gamescreen_width);
-            $(where).height(prev_gamescreen_height);
+            holderdiv.remove();
             console.remove();
         },
         
@@ -38,8 +36,8 @@ renderlib.screens.fullCanvas = function(where, game,width,height) {
                 game.extents.x2 + half_viewportwidth,
                 game.extents.y2 + half_viewportheight);
             
-            $(where).scrollLeft(c2s.cartesian2screenx(x1));
-            $(where).scrollTop(c2s.cartesian2screeny(y2));
+            $(holderdiv).scrollLeft(c2s.cartesian2screenx(x1));
+            $(holderdiv).scrollTop(c2s.cartesian2screeny(y2));
             
             return {
                 draw: function(d) {

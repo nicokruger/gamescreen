@@ -26,50 +26,45 @@
 		}
 
 		.console2 {
+			float: left;
 			font-color: white;
 			color: white;
 			padding: 5px;
 			background-color: rgba(145,100,100,0.3);
-			position:relative;
+			z-index: 5;
 		}
 
 		.gamecanvas {
-			position:fixed;
 			background-color: #000000;
+			z-index: 0;
 		}
 
-		.gamearaea {
-			border: 1px solid black;
-			position:relative;
-			background-color:green;
-		}
-
-		div {
-			display:inline-block;
+		.gamearea {
+			margin: 20px;
+			border-color: black;
+			border-style: solid;
+			border-width: 1px;
 			background-color:#0000bb;
 		}
+
 	</style>
 </head>
 
 <body style="background-color: #aabbcc">
 
-
-	<div id="info" class="console"></div>
-
-	<div style="border: 1px solid black">
-		<div id="gamearea1" class="gamearea"></div>
-	</div>
-	<div style="border: 1px solid black">
-		<div id="gamearea2" class="gamearea"></div>
-	</div>
+	<div id="gamearea1" class="gamearea" style="float:left"></div>
+	<div id="gamearea2" class="gamearea" style="float:left"></div>
+	<div id="gamearea3" class="gamearea" style="float:left"></div>
+	<div id="gamearea4" class="gamearea" style="float:left"></div>
 
 	<span style="width:200px"><span style="width: 100px;">a - show all. c - clear</span>
-		<span>Image: <select id="file"><option>doom</option><option>tux</option></select></span>
-	</span>
-
-	<span id="polys" style="display: inline-block;">
-		<span id="all">All</span>
-		<span id="clear">Clear</span>
+		<span>Image: 
+			<select id="file">
+				<option>doom</option>
+				<option>doom</option>
+				<option>tux</option>
+			</select>
+		</span>
 	</span>
 
 </body>

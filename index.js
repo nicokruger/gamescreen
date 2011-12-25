@@ -1,7 +1,7 @@
 Ticker = undefined; // hack
 
-var WORLD = 800;
-var SCREEN = 800;
+var WORLD = 500;
+var SCREEN = 500;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
@@ -40,8 +40,11 @@ var worldCreator = function (world) {
 };
 
 var prev = undefined;
-var drawAll = function () {
-	var x = Date.now();
+var drawAll = function (/* time */ time) {
+	if (time === undefined) {
+		return;
+	}
+	var x = time;
 	var elapsed = 0;
 	if (prev === undefined) {
 		prev = x;
@@ -57,7 +60,10 @@ var drawAll = function () {
 
 $(function () {
 	var viewports = [
-		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN)
+		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN),
+		new screenOps($("#gamearea2"), screenTypes[1][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN),
+		new screenOps($("#gamearea3"), screenTypes[1][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN),
+		new screenOps($("#gamearea4"), screenTypes[0][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN)
 		], screen;
 
 	var gen = function () {
@@ -79,25 +85,11 @@ $(function () {
 					polygons = [];
 
 					_(data.polys).each(function (poly) {
-
 						var _poly = {
 							points: _(poly.polygon).map(function (p) { return [Math.floor(p.x), Math.floor(p.y)]; }),
 							color: [poly.color.r, poly.color.g, poly.color.b, poly.color.a/255.0]
 						};
 						polygons.push(_poly);
-						var x = $("<span style=\"cursor: pointer\"></span>").appendTo($("#polys"));
-						$(x).html(" " + xx);
-						x.click((function(w) {
-							return function () {
-								var l = drawing.length;
-								for (var i = 0; i < l; i++) {
-									drawing.splice(0,1);
-								}
-								drawing.push(w);
-								drawAll();
-							};
-							})(xx));
-						xx++;
 					});
 					drawing.splice(0, drawing.length, 0);
 					for (var i = 0; i < polygons.length; i++) {
@@ -177,18 +169,12 @@ $(function () {
 		grid = !grid;
 	});
 	
-	KeyboardJS.bind.key("alt + dash", function () {
-		currentComposite -= 1;
-		if (currentComposite < 0 ) {
-			currentComposite = 0;
-		}
+	KeyboardJS.bind.key("z", function () {
+		load("doom.json");
 	});
-
-	KeyboardJS.bind.key("alt + equal", function () {
-		currentComposite += 1;
-		if (currentComposite >= compositeTypes.length) {
-			currentComposite = 0;
-		}
+	
+	KeyboardJS.bind.key("x", function () {
+		gen();
 	});
 	
 	$("#all").click(function () {

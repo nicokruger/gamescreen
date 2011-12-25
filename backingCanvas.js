@@ -6,7 +6,7 @@ renderlib.screens.backingCanvas = function(where,game,width,height) {
     var extents_width = game.extents.x2 - game.extents.x1 + width;
     var extents_height = game.extents.y2 - game.extents.y1 + height;
     $(where).width(width);
-    $(where).height(height);
+    $(where).height(height + 60);
     var canvas = $("<canvas class=\"gamecanvas\" width=\"" + width + "\" height=\"" + height + "\"></canvas>").appendTo($(where));
     var canvas_hidden = $("<canvas width=\"" + extents_width +"\" height=\"" + extents_height + "\" style=\"display:none\"></canvas>").appendTo($(where));
 

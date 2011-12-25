@@ -5,13 +5,10 @@ var movePoly = function (poly, offsetx, offsety) {
 	var test = { x: 0 };
 	//Tween.get(test).wait(100).to({x:50},1000).call(function () { alert("working"); });
 
-	var TP = Math.random() * 1000 + 3000;
 	//var TP = 4000;
 	newPoly.points = _(poly.points).map(function (p) {
 		var np = [p[0] + offsetx, p[1] + offsety];
 		
-		Tween.get(np).wait(1500).to({"0": p[0], "1" : p[1]}, TP /*,Ease.elasticIn*/ /*Ease.getPowIn(3)*/);
-
 		return np;
 	});
 	newPoly.color = poly.color;
@@ -19,10 +16,31 @@ var movePoly = function (poly, offsetx, offsety) {
 	return newPoly;
 };
 
-var jitterPolygons = function (polygons) {
+var spreadPolygons = function (polygons, spread) {
+	var i = 0;
 	return _(polygons).map(function (p) {
-		var x = Math.floor(-2000 + Math.random() * 4000);
-		var y = Math.floor(-2000 + Math.random() * 4000);
+		var x = 0;
+		var y = 0;
+
+		var r = 2*Math.PI/polygons.length * i;
+
+		i++;
+		
+		var np = movePoly(p, Math.cos(r) * spread, Math.sin(r) * spread);
+		_(p.points).chain().zip(np.points).each(function (p) {
+			var op = p[0];
+			var np = p[1];
+			var thisPoly = 5000.0/polygons.length * i;
+			Tween.get(np).wait(thisPoly).to({"0": op[0], "1" : op[1]}, 2000, Ease.getPowIn(4));
+		});
+		return np;
+	});
+};
+
+var jitterPolygons = function (polygons, distance) {
+	return _(polygons).map(function (p) {
+		var x = Math.floor(-2000 + Math.random() * distance);
+		var y = Math.floor(-2000 + Math.random() * distance);
 		return movePoly(p, x, y);
 	});
 };
@@ -74,10 +92,9 @@ var createDrawer = function (polygons) {
 			} else {
 				t = ("Drawing many");
 			}
-			t += " Composition: " + compositeTypes[currentComposite];
 
 			var t2 = Date.now();
-			screen.console("F: " + (t2-t1) + " - " + t + " E: " + elapsed);
+			screen.console("" + (t2-t1) + "/" + elapsed);
 
 			Tween.tick(elapsed > 0 ? elapsed : 1, false);
 
@@ -88,7 +105,7 @@ var createDrawer = function (polygons) {
 };
 
 var animate = function (polygons) {
-	return createDrawer(jitterPolygons(polygons));
+	return createDrawer(spreadPolygons(polygons, 800));
 };
 
 var drawAll = function () {
