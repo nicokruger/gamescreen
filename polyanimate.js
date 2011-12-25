@@ -51,10 +51,6 @@ var createDrawer = function (polygons) {
 		var draw = function (c2s, ctx) {
 			var canvas = ctx.canvas;
 
-			if (grid) {
-				renderlib.util.grid(ctx, "rgb(30,30,30)", c2s, -WORLD, -WORLD, WORLD, WORLD, GRIDSIZE);
-			}
-
 			var drawPolygon = function (polygon) {
 				ctx.fillStyle = "rgba(" + polygon.color[0] + "," + polygon.color[1] + "," + polygon.color[2] + "," + polygon.color[3] + ")";
 				//ctx.strokeStyle = "#00ff00";
@@ -77,6 +73,9 @@ var createDrawer = function (polygons) {
 				}
 			}
 
+			if (grid) {
+				gamescreen.util.grid(ctx, "rgb(30,30,30)", c2s, -WORLD, -WORLD, WORLD, WORLD, GRIDSIZE);
+			}
 
 		};
 

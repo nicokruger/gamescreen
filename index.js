@@ -1,7 +1,7 @@
 Ticker = undefined; // hack
 
 var WORLD = 500;
-var SCREEN = 300;
+var SCREEN = 500;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
@@ -43,24 +43,23 @@ var drawAll = function (/* time */ time) {
 
 
 	_(screens).each(function (x) {
-		x(time);
+		x.draw(time);
 	});
 	window.requestAnimFrame(drawAll);
 };
 
 $(function () {
 	var viewports = [
-		new gamescreen.create($("#gamearea1"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
-		new gamescreen.create($("#gamearea2"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
-		new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
-		new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)
+		new gamescreen.create($("#gamearea1"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
+		new gamescreen.create($("#gamearea2"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)
+		/*new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
+		new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)*/
 		], screen;
 
 	var gen = function () {
 		//viewport.size(SCREEN);
-		screens = _(viewports).map(function (v) {
-			var screen = v.size(SCREEN, SCREEN);
-			return gamescreen.createView(screen, animate(polygons));
+		screens = _(viewports).map(function (viewport) {
+			return gamescreen.createView(viewport, SCREEN, SCREEN, animate(polygons));
 		});
 	};
 	
@@ -90,6 +89,32 @@ $(function () {
 	};
 
 	load("doom.json");
+
+	var SCROLL_SPEED = 16;
+
+	KeyboardJS.bind.key("up", function () {
+		_(screens).each(function (screen) {
+			screen.move(0,SCROLL_SPEED);
+		});
+	});
+
+	KeyboardJS.bind.key("down", function () {
+		_(screens).each(function (screen) {
+			screen.move(0,-SCROLL_SPEED);
+		});
+	});
+	
+	KeyboardJS.bind.key("left", function () {
+		_(screens).each(function (screen) {
+			screen.move(-SCROLL_SPEED,0);
+		});
+	});
+
+	KeyboardJS.bind.key("right", function () {
+		_(screens).each(function (screen) {
+			screen.move(SCROLL_SPEED,0);
+		});
+	});
 
 	KeyboardJS.bind.key("r", function () {
 		gen();
@@ -163,6 +188,20 @@ $(function () {
 	
 	KeyboardJS.bind.key("x", function () {
 		gen();
+	});
+
+	var consoleFull = false;
+	KeyboardJS.bind.key("graveaccent", function () {
+		consoleFull = !consoleFull;
+		if (consoleFull) {
+			_(screens).each(function (screen) {
+				screen.console.large();
+			});
+		} else {
+			_(screens).each(function (screen) {
+				screen.console.small();
+			});
+		}
 	});
 	
 	$("#all").click(function () {

@@ -9,13 +9,16 @@ var _local = (function () {
 
 				return {
 					create: function (x1, y1, x2, y2) {
-						return s.create([], x1, y1, x2, y2);
+						var _s = s.create([], x1, y1, x2, y2);
+						return _s;
 					},
+
 					cleanup: function () {
 						// TODO: remove from the screen list here!
 
 						return s.cleanup();
 					}
+
 				};
 			};
 
@@ -31,11 +34,20 @@ var _local = (function () {
 				return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2);
 			};
 
-			this.move = function (x1, y1, x2, y2) {
-				this._remove();
+			this.move = function (x,y) {
+				centerpoint[0] += x;
+				centerpoint[1] += y;
+
+				return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2);
+			};
+
+			this.center = function (x1, y1, x2, y2) {
 				return this.sc.create(x1, y1, x2, y2);
 			};
 
+			this.getCenter = function () {
+				return centerpoint;
+			};
 		},
 
 		world: function (worldsize) {
@@ -51,7 +63,9 @@ var _local = (function () {
 			};
 		},
 
-		createView: function (screen, draw) {
+		createView: function (viewport, width, height, draw) {
+			var screen = viewport.size(SCREEN, SCREEN);
+
 			var realFpsTimeCounter = 0;
 			var realFps = -1;
 			var prevRealFps;
@@ -74,9 +88,9 @@ var _local = (function () {
 
 				draw(screen, drawing, isDrawing, elapsed);
 
-				var consoleText = "Anim: " + Math.round(1000.0/elapsed, 2);
+				screen.console.frame_log("Anim: " + Math.round(1000.0/elapsed, 2));
 				if (prevTime !== undefined) {
-					consoleText += " Drawing: " + Math.round(1000.0/prevTime, 2);
+					screen.console.frame_log(" Drawing: " + Math.round(1000.0/prevTime, 2));
 				}
 				prevTime = Date.now() - start;
 				realFpsTimeCounter += prevTime;
@@ -87,22 +101,30 @@ var _local = (function () {
 					realFps = 0;
 				}
 				if (prevRealFps !== undefined) {
-					consoleText += " Real: " + prevRealFps;
+					screen.console.frame_log(" Real: " + prevRealFps);
 				}
-				screen.console(consoleText);
 					
 			};
 
-			return function (time) {
-				if (isDrawing) {
-					drawFunction(time);
-				} else {
-					screen.console("Paused");
-				}
+			return {
+				draw: function (time) {
+					screen.console.frame_start();
+					var cp = viewport.getCenter();
+					screen.console.frame_log("S: " + cp[0] + "/" + cp[1]);
+					if (isDrawing) {
+						drawFunction(time);
+					} else {
+						screen.console.frame_log("Paused");
+					}
+					screen.console.frame_end();
+				},
+				move: function (x,y) {
+					//screen = viewport.move(x1,y1,x2,y2);
+					screen = viewport.move(x,y);
+				},
+				console: screen.console
 			};
 		}
-
-		//anim: 
 
 	};
 })();

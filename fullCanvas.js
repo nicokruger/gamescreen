@@ -12,12 +12,15 @@ gamescreen.screens.fullCanvas = function(where, game,width,height) {
     var holderdiv = $("<div></div>").appendTo(where);
     holderdiv.width(width);
     holderdiv.height(height);
-    holderdiv.css("overflow", "scroll");
+    holderdiv.css("overflow", "hidden");
 
     var canvas = $("<canvas class=\"gamecanvas\" width=\"" + game_width + "\" height=\"" + game_height + "\"></canvas></div>").appendTo($(holderdiv));
     
-    var console = $('<div class="console2"></div>').appendTo($(where));
-    console.width(width);
+    var consoleDiv = $('<div class="console2"></div>').appendTo($(where));
+    consoleDiv.width(width);
+    var _console = gamescreen.console($(consoleDiv));
+    _console.log("FullCanvas: " + gamescreen.console.util.point(width,height));
+            
     
     var ctx = canvas[0].getContext("2d"); // don't like the [0] subscript - some jQuery thing I don't understand?
     
@@ -25,7 +28,7 @@ gamescreen.screens.fullCanvas = function(where, game,width,height) {
         cleanup: function() {
             canvas.remove();
             holderdiv.remove();
-            console.remove();
+            consoleDiv.remove();
         },
         
         create: function(sectors, x1, y1, x2, y2) {
@@ -41,13 +44,14 @@ gamescreen.screens.fullCanvas = function(where, game,width,height) {
             
             return {
                 draw: function(d) {
+                    //_console.log("FullCanvas@" + gamescreen.console.util.rect(x1,y1,x2,y2));
                     gamescreen.util.Timer.start("FullCanvas");
                     ctx.fillStyle = "#ffffff";
                     ctx.fillRect(
                         c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y1),
+                        c2s.cartesian2screeny(y2),
                         c2s.cartesian2screenx(x2) - c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y2) - c2s.cartesian2screeny(y1)
+                        c2s.cartesian2screeny(y1) - c2s.cartesian2screeny(y2)
                     );
                                         
                     gamescreen.util.Timer.substart("Draw");
@@ -56,10 +60,7 @@ gamescreen.screens.fullCanvas = function(where, game,width,height) {
                     
                     gamescreen.util.Timer.end();
                 },
-                console: function (html) {
-                    $(console).html(html);
-                }
-
+                console: _console
             };
         }
     };

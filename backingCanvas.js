@@ -10,9 +10,11 @@ gamescreen.screens.backingCanvas = function(where,game,width,height) {
     var canvas = $("<canvas class=\"gamecanvas\" width=\"" + width + "\" height=\"" + height + "\"></canvas>").appendTo($(where));
     var canvas_hidden = $("<canvas width=\"" + extents_width +"\" height=\"" + extents_height + "\" style=\"display:none\"></canvas>").appendTo($(where));
 
-    var console = $('<div class="console2"></div>').appendTo($(where));
-    console.width(width);
+    var consoleDiv = $('<div class="console2"></div>').appendTo($(where));
+    consoleDiv.width(width);
+    var _console = gamescreen.console($(consoleDiv));
     //console.height(height);
+    _console.log("BackingCanvas: " + gamescreen.console.util.point(width,height));
 
     var ctx_front = canvas[0].getContext("2d");
     var ctx_back = canvas_hidden[0].getContext("2d");
@@ -20,7 +22,7 @@ gamescreen.screens.backingCanvas = function(where,game,width,height) {
         cleanup: function() {
             canvas.remove();
             canvas_hidden.remove();
-            console.remove();
+            consoleDiv.remove();
         },
                 
 
@@ -31,7 +33,7 @@ gamescreen.screens.backingCanvas = function(where,game,width,height) {
                 game.extents.y1 - half_viewportheight,
                 game.extents.x2 + half_viewportwidth,
                 game.extents.y2 + half_viewportheight);
-            
+
             return  {
                 draw: function(d) {
                     gamescreen.util.Timer.start("BackingCanvas");
@@ -66,9 +68,7 @@ gamescreen.screens.backingCanvas = function(where,game,width,height) {
                     gamescreen.util.Timer.end();
                 },
 
-                console: function (html) {
-                    $(console).html(html);
-                }
+                console: _console
             };
         }
     };
