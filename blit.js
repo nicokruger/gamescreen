@@ -1,8 +1,8 @@
-var renderlib;
-if (!renderlib) renderlib = {}; // initialise the top-level module if it does not exist
-if (!renderlib.screens) renderlib.screens = {};
+var gamescreen;
+if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does not exist
+if (!gamescreen.screens) gamescreen.screens = {};
 
-renderlib.screens.blit = function(game,width,height) {
+gamescreen.screens.blit = function(game,width,height) {
     $("#gamescreenarea").append("<canvas id=\"canvas2d\" width=\"" + width + "\" height=\"" + height + "\" />");
     var ctx = $("#canvas2d")[0].getContext("2d");
     var data = ctx.createImageData(width + 1, height + 1);
@@ -13,26 +13,26 @@ renderlib.screens.blit = function(game,width,height) {
         },
         
         create: function(sectors, x1, y1, x2, y2) {
-            var c2s = new renderlib.util.Cartesian2Screen(x1,y1,x2,y2);
-            var drawers = renderlib.renderutil.scanPolys(_.map(sectors, function(s) { return s.poly; }), x1,y1,x2,y2);
+            var c2s = new gamescreen.util.Cartesian2Screen(x1,y1,x2,y2);
+            var drawers = gamescreen.renderutil.scanPolys(_.map(sectors, function(s) { return s.poly; }), x1,y1,x2,y2);
             return {
                 draw: function(textures) {
-                    renderlib.util.Timer.start("Sectordraw");
+                    gamescreen.util.Timer.start("Sectordraw");
                     
-                    renderlib.util.Timer.substart("clean");
+                    gamescreen.util.Timer.substart("clean");
                     var length = ctx.canvas.width * ctx.canvas.height * 4, i = 0;
                     for (; i < length; i++) {
                         data.data[i] = 0;
                     }
-                    renderlib.util.Timer.subend();
+                    gamescreen.util.Timer.subend();
                     
-                    renderlib.renderutil.fillBuffer(drawers, textures, data);
+                    gamescreen.renderutil.fillBuffer(drawers, textures, data);
                     
-                    renderlib.util.Timer.substart("Put image buffer");
+                    gamescreen.util.Timer.substart("Put image buffer");
                     ctx.putImageData(data, 0, 0);
-                    renderlib.util.Timer.subend();
+                    gamescreen.util.Timer.subend();
                     
-                    renderlib.util.Timer.end();
+                    gamescreen.util.Timer.end();
                     
                     for (i = 0; i < sectors.length; i++) {
                         for (var k = 0; k < sectors[i].poly.edges.length; k++) {

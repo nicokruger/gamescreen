@@ -1,8 +1,8 @@
-var renderlib;
-if (!renderlib) renderlib = {}; // initialise the top-level module if it does not exist
-if (!renderlib.screens) renderlib.screens = {};
+var gamescreen;
+if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does not exist
+if (!gamescreen.screens) gamescreen.screens = {};
     
-renderlib.screens.fullCanvas = function(where, game,width,height) {
+gamescreen.screens.fullCanvas = function(where, game,width,height) {
     var game_width = game.extents.x2 - game.extents.x1 + width;
     var game_height = game.extents.y2 - game.extents.y1 + height;
     
@@ -31,7 +31,7 @@ renderlib.screens.fullCanvas = function(where, game,width,height) {
         create: function(sectors, x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
-            var c2s = new renderlib.util.Cartesian2Screen(game.extents.x1 - half_viewportwidth,
+            var c2s = new gamescreen.util.Cartesian2Screen(game.extents.x1 - half_viewportwidth,
                 game.extents.y1 - half_viewportheight,
                 game.extents.x2 + half_viewportwidth,
                 game.extents.y2 + half_viewportheight);
@@ -41,7 +41,7 @@ renderlib.screens.fullCanvas = function(where, game,width,height) {
             
             return {
                 draw: function(d) {
-                    renderlib.util.Timer.start("FullCanvas");
+                    gamescreen.util.Timer.start("FullCanvas");
                     ctx.fillStyle = "#ffffff";
                     ctx.fillRect(
                         c2s.cartesian2screenx(x1),
@@ -50,11 +50,11 @@ renderlib.screens.fullCanvas = function(where, game,width,height) {
                         c2s.cartesian2screeny(y2) - c2s.cartesian2screeny(y1)
                     );
                                         
-                    renderlib.util.Timer.substart("Draw");
+                    gamescreen.util.Timer.substart("Draw");
                     d(c2s, ctx);
-                    renderlib.util.Timer.subend();
+                    gamescreen.util.Timer.subend();
                     
-                    renderlib.util.Timer.end();
+                    gamescreen.util.Timer.end();
                 },
                 console: function (html) {
                     $(console).html(html);

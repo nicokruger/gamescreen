@@ -1,7 +1,7 @@
-var renderlib;
-if (!renderlib) renderlib = {}; // initialise the top-level module if it does not exist
+var gamescreen;
+if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does not exist
 
-renderlib.util = (function() {
+gamescreen.util = (function() {
     var printTimer = function (t,indent) {
         var prefix="";
         for (var i = 0; i < indent; i++) prefix+=" ";
