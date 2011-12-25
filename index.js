@@ -1,7 +1,7 @@
 Ticker = undefined; // hack
 
 var WORLD = 500;
-var SCREEN = 500;
+var SCREEN = 800;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
@@ -39,40 +39,77 @@ var worldCreator = function (world) {
 	};
 };
 
-var prev = undefined;
+var screenDrawer = (function (screen, draw) {
+	var realFpsTimeCounter = 0;
+	var realFps = -1;
+	var prevRealFps;
+	var prevTime;
+	var prev;
+
+	var drawFunction = function (time) {
+		if (time === undefined) {
+			return;
+		}
+		var x = time;
+		var elapsed = 0;
+		if (prev === undefined) {
+			prev = x;
+		} else {
+			elapsed = x - prev;
+			prev =  x;
+		}
+
+		draw(screen, drawing, isDrawing, elapsed);
+
+		var consoleText = "Anim: " + Math.round(1000.0/elapsed, 2);
+		if (prevTime !== undefined) {
+			consoleText += " Drawing: " + Math.round(1000.0/prevTime, 2);
+		}
+		prevTime = Date.now() - prev;
+		realFpsTimeCounter += prevTime;
+		realFps++;
+		if (realFpsTimeCounter >= 1000) {
+			prevRealFps = realFps;
+			realFpsTimeCounter = 0;
+			realFps = 0;
+		}
+		if (prevRealFps !== undefined) {
+			consoleText += " Real: " + prevRealFps;
+		}
+		screen.console(consoleText);
+			
+	};
+
+	return function (time) {
+		if (isDrawing) {
+			drawFunction(time);
+		} else {
+			screen.console("Paused");
+		}
+	};
+});
+
 var drawAll = function (/* time */ time) {
-	if (time === undefined) {
-		return;
-	}
-	var x = time;
-	var elapsed = 0;
-	if (prev === undefined) {
-		prev = x;
-	} else {
-		elapsed = x - prev;
-		prev = x;
-	}
-	_(screens).each(function (screen) {
-		screen[1](screen[0],drawing,isDrawing, elapsed);
+	_(screens).each(function (x) {
+		x(time);
 	});
 	window.requestAnimFrame(drawAll);
 };
 
 $(function () {
 	var viewports = [
-		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN),
-		new screenOps($("#gamearea2"), screenTypes[1][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN),
+		new screenOps($("#gamearea1"), screenTypes[0][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN)
+/*		new screenOps($("#gamearea2"), screenTypes[1][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN),
 		new screenOps($("#gamearea3"), screenTypes[1][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN),
 		new screenOps($("#gamearea4"), screenTypes[0][0], worldCreator(WORLD), [200,-200], SCREEN, SCREEN)
-		], screen;
+*/		], screen;
 
 	var gen = function () {
 		//viewport.size(SCREEN);
 		screens = _(viewports).map(function (v) {
 			var screen = v.size(SCREEN, SCREEN);
-			return [v.size(SCREEN, SCREEN), animate(polygons)];
+			return screenDrawer(screen, animate(polygons));
 		});
-		drawAll();
 	};
 	
 	var load = function (file) {
@@ -147,7 +184,6 @@ $(function () {
 		}
 		if (drawing[drawing.length-1] !== undefined && drawing[drawing.length-1] + 1 < polygons.length) {
 			drawing.push(drawing[drawing.length-1] !== undefined ? drawing[drawing.length-1]+1 : 0);
-			drawAll();
 		}
 	});
 	

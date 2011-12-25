@@ -81,21 +81,7 @@ var createDrawer = function (polygons) {
 		};
 
 		if (isDrawing) {
-			var t1 = Date.now();
-
 			screen.draw(draw);
-			var t = "";
-			if (drawing.length < 5) {
-				t = ("Drawing: " + drawing.join(","));
-			} else if (drawing.length >= polygons.length) {
-				t = ("Drawing all");
-			} else {
-				t = ("Drawing many");
-			}
-
-			var t2 = Date.now();
-			screen.console("" + (t2-t1) + "/" + elapsed);
-
 			Tween.tick(elapsed > 0 ? elapsed : 1, false);
 
 		} else {
