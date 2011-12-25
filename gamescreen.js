@@ -62,6 +62,7 @@ var _local = (function () {
 				if (time === undefined) {
 					return;
 				}
+				var start = Date.now();
 				var x = time;
 				var elapsed = 0;
 				if (prev === undefined) {
@@ -77,7 +78,7 @@ var _local = (function () {
 				if (prevTime !== undefined) {
 					consoleText += " Drawing: " + Math.round(1000.0/prevTime, 2);
 				}
-				prevTime = Date.now() - prev;
+				prevTime = Date.now() - start;
 				realFpsTimeCounter += prevTime;
 				realFps++;
 				if (realFpsTimeCounter >= 1000) {

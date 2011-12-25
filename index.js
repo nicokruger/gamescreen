@@ -1,7 +1,7 @@
 Ticker = undefined; // hack
 
 var WORLD = 500;
-var SCREEN = 800;
+var SCREEN = 300;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
@@ -25,19 +25,35 @@ var screenTypes = [
 	[gamescreen.screens.backingCanvas, "Backing canvas"],
 	[gamescreen.screens.fullCanvas, "Full canvas"]
 ];
+
+var prev;
 var drawAll = function (/* time */ time) {
+	var x = time;
+	var elapsed = 0;
+	if (prev === undefined) {
+		prev = x;
+	} else {
+		elapsed = x - prev;
+		prev =  x;
+	}
+
+	if (prev !== undefined) {
+		Tween.tick(elapsed > 0 ? elapsed : 1, false);
+	}
+
+
 	_(screens).each(function (x) {
 		x(time);
-		});
+	});
 	window.requestAnimFrame(drawAll);
 };
 
 $(function () {
 	var viewports = [
-		new gamescreen.create($("#gamearea1"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)
-		//new gamescreen.create($("#gamearea2"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
-		//new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
-		//new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)
+		new gamescreen.create($("#gamearea1"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
+		new gamescreen.create($("#gamearea2"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
+		new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
+		new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)
 		], screen;
 
 	var gen = function () {

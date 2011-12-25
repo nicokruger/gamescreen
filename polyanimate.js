@@ -82,8 +82,6 @@ var createDrawer = function (polygons) {
 
 		if (isDrawing) {
 			screen.draw(draw);
-			Tween.tick(elapsed > 0 ? elapsed : 1, false);
-
 		} else {
 			screen.console("Paused");
 		}
