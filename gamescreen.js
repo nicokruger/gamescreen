@@ -3,9 +3,9 @@ if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does 
 
 var _local = (function () {
 	return {
-		create: function(where, type, world, centerpoint, width, height){
+		create: function(where, type, world, centerpoint, width, height,background){
 			var screenCreator = function (where, type, world, width, height) {
-				var s = type($(where), world, width, height);
+				var s = type($(where), world, width, height, background);
 
 				return {
 					create: function (x1, y1, x2, y2) {
@@ -22,27 +22,27 @@ var _local = (function () {
 				};
 			};
 
-			this._remove = function () {
+			this.remove = function () {
 				if (typeof(this.sc) !== "undefined") {
 					this.sc.cleanup();
 				}
 			};
 
 			this.size = function (width,height) {
-				this._remove();
-				this.sc = screenCreator(where, type, world, width, height);
-				return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2);
+				this.remove();
+				this.sc = screenCreator(where, type, world, width, height,background);
+				return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2, background);
 			};
 
 			this.move = function (x,y) {
 				centerpoint[0] += x;
 				centerpoint[1] += y;
 
-				return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2);
+				return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2, background);
 			};
 
 			this.center = function (x1, y1, x2, y2) {
-				return this.sc.create(x1, y1, x2, y2);
+				return this.sc.create(x1, y1, x2, y2, background);
 			};
 
 			this.getCenter = function () {
@@ -63,8 +63,8 @@ var _local = (function () {
 			};
 		},
 
-		createView: function (viewport, width, height, draw) {
-			var screen = viewport.size(SCREEN, SCREEN);
+		createView: function (viewport, width, height, draw, background) {
+			var screen = viewport.size(SCREEN, SCREEN, background);
 
 			var realFpsTimeCounter = 0;
 			var realFps = -1;

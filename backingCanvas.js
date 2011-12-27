@@ -2,7 +2,8 @@ var gamescreen;
 if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does not exist
 if (!gamescreen.screens) gamescreen.screens = {};
 
-gamescreen.screens.backingCanvas = function(where,game,width,height) {
+gamescreen.screens.backingCanvas = function(where, game, width, height, background) {
+    var bg = background === undefined ? "#ffffff" : background;
     var extents_width = game.extents.x2 - game.extents.x1 + width;
     var extents_height = game.extents.y2 - game.extents.y1 + height;
     $(where).width(width);
@@ -33,14 +34,22 @@ gamescreen.screens.backingCanvas = function(where,game,width,height) {
                 game.extents.y1 - half_viewportheight,
                 game.extents.x2 + half_viewportwidth,
                 game.extents.y2 + half_viewportheight);
-
+            //_console.frame_log(gamescreen.console.util.rect(x1,y1,x2,y2));
             return  {
                 draw: function(d) {
+
+/*                    _console.frame_log(gamescreen.console.util.rect(
+                        c2s.cartesian2screeny(x1),
+                        c2s.cartesian2screeny(y2),
+                        width,
+                        height
+                    ));
+*/
                     gamescreen.util.Timer.start("BackingCanvas");
 
                     gamescreen.util.Timer.substart("clean back");
                     ctx_back.globalCompositeOperation = "none";
-                    ctx_back.fillStyle = "#ffffff";
+                    ctx_back.fillStyle = bg;
                     ctx_back.fillRect(
                         c2s.cartesian2screenx(x1),
                         c2s.cartesian2screeny(y2),

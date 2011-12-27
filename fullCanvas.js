@@ -2,13 +2,14 @@ var gamescreen;
 if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does not exist
 if (!gamescreen.screens) gamescreen.screens = {};
     
-gamescreen.screens.fullCanvas = function(where, game,width,height) {
+gamescreen.screens.fullCanvas = function(where, game, width, height, background) {
+    var bg = background === undefined ? "#ffffff" : background;
     var game_width = game.extents.x2 - game.extents.x1 + width;
     var game_height = game.extents.y2 - game.extents.y1 + height;
     
     $(where).width(width);
     $(where).height(height + 60);
-    
+        
     var holderdiv = $("<div></div>").appendTo(where);
     holderdiv.width(width);
     holderdiv.height(height);
@@ -46,7 +47,7 @@ gamescreen.screens.fullCanvas = function(where, game,width,height) {
                 draw: function(d) {
                     //_console.log("FullCanvas@" + gamescreen.console.util.rect(x1,y1,x2,y2));
                     gamescreen.util.Timer.start("FullCanvas");
-                    ctx.fillStyle = "#ffffff";
+                    ctx.fillStyle = bg;
                     ctx.fillRect(
                         c2s.cartesian2screenx(x1),
                         c2s.cartesian2screeny(y2),

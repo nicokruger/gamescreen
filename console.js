@@ -37,11 +37,11 @@ gamescreen.console = function (where) {
 
 gamescreen.console.util = {
 	point: function (x,y) {
-		return x + "," + y;
+		return "[" + x + "," + y + "]";
 	},
 
 	rect: function(x1,y1,x2,y2) {
-		return x1 + "," + y1 + "x" + x2 + "," + y2;
+		return "[" + x1 + "," + y1 + "]x[" + x2 + "," + y2 + "]";
 	}
 
 };

@@ -1,7 +1,7 @@
 Ticker = undefined; // hack
 
 var WORLD = 500;
-var SCREEN = 500;
+var SCREEN = 800;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
@@ -20,6 +20,7 @@ var isDrawing = true;
 var screens = [];
 
 var polygons = [];
+var backgroundColor;
 
 var screenTypes = [
 	[gamescreen.screens.backingCanvas, "Backing canvas"],
@@ -48,15 +49,21 @@ var drawAll = function (/* time */ time) {
 	window.requestAnimFrame(drawAll);
 };
 
+var viewports = [];
 $(function () {
-	var viewports = [
-		new gamescreen.create($("#gamearea1"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
-		new gamescreen.create($("#gamearea2"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)
-		/*new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
-		new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)*/
-		], screen;
-
 	var gen = function () {
+		_(viewports).each(function (viewport){
+			viewport.remove();
+		});
+
+		var _new_viewports = [
+			new gamescreen.create($("#gamearea1"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN, background)
+			/*new gamescreen.create($("#gamearea2"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)
+			new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
+			new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)*/
+			], screen;
+		viewports = _new_viewports;
+		
 		//viewport.size(SCREEN);
 		screens = _(viewports).map(function (viewport) {
 			return gamescreen.createView(viewport, SCREEN, SCREEN, animate(polygons));
@@ -70,6 +77,9 @@ $(function () {
 				data: {},
 				success: function(data) {
 					var xx = 0;
+
+					background = data.background;
+
 					polygons = [];
 
 					_(data.polys).each(function (poly) {
@@ -88,7 +98,7 @@ $(function () {
 		});
 	};
 
-	load("doom.json");
+	load("doom_black.json");
 
 	var SCROLL_SPEED = 16;
 

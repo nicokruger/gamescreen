@@ -16,6 +16,11 @@ var movePoly = function (poly, offsetx, offsety) {
 	return newPoly;
 };
 
+var drawPolygonsFlag = true;
+KeyboardJS.bind.key("p", function () {
+	drawPolygonsFlag = drawPolygonsFlag;
+});
+
 var spreadPolygons = function (polygons, spread) {
 	var i = 0;
 	return _(polygons).map(function (p) {
@@ -67,7 +72,7 @@ var createDrawer = function (polygons) {
 				ctx.fill();
 			};
 
-			if (polygons.length > 0) {
+			if (drawPolygonsFlag && polygons.length > 0) {
 				for (var k = 0; k < drawing.length; k++) {
 					drawPolygon(polygons[drawing[k]]);
 				}
