@@ -11,7 +11,7 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
     var canvas = $("<canvas class=\"gamecanvas\" width=\"" + width + "\" height=\"" + height + "\"></canvas>").appendTo($(where));
     var canvas_hidden = $("<canvas width=\"" + extents_width +"\" height=\"" + extents_height + "\" style=\"display:none\"></canvas>").appendTo($(where));
 
-    var consoleDiv = $('<div class="console2"></div>').appendTo($(where));
+    var consoleDiv = $('<div></div>').appendTo($(where));
     consoleDiv.width(width);
     var _console = gamescreen.console($(consoleDiv));
     //console.height(height);

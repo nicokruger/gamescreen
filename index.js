@@ -1,7 +1,8 @@
 Ticker = undefined; // hack
 
 var WORLD = 500;
-var SCREEN = 800;
+var SCREEN_WIDTH = 800;
+var SCREEN_HEIGHT = 400;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
@@ -57,16 +58,16 @@ $(function () {
 		});
 
 		var _new_viewports = [
-			new gamescreen.create($("#gamearea1"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN, background)
-			/*new gamescreen.create($("#gamearea2"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)
-			new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN),
-			new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN)*/
+			new gamescreen.create($("#gamearea1"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN_WIDTH, SCREEN_HEIGHT, background)
+			/*new gamescreen.create($("#gamearea2"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN, background),
+			new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN, background),
+			new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN, background)*/
 			], screen;
 		viewports = _new_viewports;
-		
+
 		//viewport.size(SCREEN);
 		screens = _(viewports).map(function (viewport) {
-			return gamescreen.createView(viewport, SCREEN, SCREEN, animate(polygons));
+			return gamescreen.createView(viewport, SCREEN_WIDTH, SCREEN_HEIGHT, animate(polygons));
 		});
 	};
 	

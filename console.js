@@ -2,6 +2,7 @@ var gamescreen;
 if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does not exist
 
 gamescreen.console = function (where) {
+	$(where).attr("class", "console-small");
 	var frameInfo = $("<div class=\"console-frameinfo\"></div>").appendTo($(where));
 	var permInfo = $("<div class=\"console-permanent\"></div>").appendTo($(where));
 	var i = 0;
@@ -18,11 +19,11 @@ gamescreen.console = function (where) {
 		},
 
 		large: function() {
-			$(where).height(600);
+			$(where).attr("class", "console-large");
 		},
 
 		small: function() {
-			$(where).height(60);
+			$(where).attr("class", "console-small");
 		},
 
 		log: function (text) {

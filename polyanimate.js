@@ -17,8 +17,10 @@ var movePoly = function (poly, offsetx, offsety) {
 };
 
 var drawPolygonsFlag = true;
-KeyboardJS.bind.key("p", function () {
-	drawPolygonsFlag = drawPolygonsFlag;
+$(function () {
+	KeyboardJS.bind.key("p", function () {
+		drawPolygonsFlag = !drawPolygonsFlag;
+	});
 });
 
 var spreadPolygons = function (polygons, spread) {

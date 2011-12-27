@@ -17,7 +17,7 @@ gamescreen.screens.fullCanvas = function(where, game, width, height, background)
 
     var canvas = $("<canvas class=\"gamecanvas\" width=\"" + game_width + "\" height=\"" + game_height + "\"></canvas></div>").appendTo($(holderdiv));
     
-    var consoleDiv = $('<div class="console2"></div>').appendTo($(where));
+    var consoleDiv = $('<div></div>').appendTo($(where));
     consoleDiv.width(width);
     var _console = gamescreen.console($(consoleDiv));
     _console.log("FullCanvas: " + gamescreen.console.util.point(width,height));

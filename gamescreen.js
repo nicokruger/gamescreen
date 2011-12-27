@@ -64,7 +64,7 @@ var _local = (function () {
 		},
 
 		createView: function (viewport, width, height, draw, background) {
-			var screen = viewport.size(SCREEN, SCREEN, background);
+			var screen = viewport.size(width, height, background);
 
 			var realFpsTimeCounter = 0;
 			var realFps = -1;
