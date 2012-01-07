@@ -83,6 +83,25 @@ gamescreen.util = (function() {
             };
         },
 
+        Identity: function (x1,y1,x2,y2) {
+            return {
+                cartesian2screenx: function(x) {
+                    return x;
+                },
+                cartesian2screeny: function(y) {
+                    return y;
+                },
+                width: function() {
+                    return x2 - x1;
+                },
+                height: function() {
+                    return y1 - y2;
+                },
+                toString: function() {
+                    return "I[" + x1 + "," + y1 + "] x [" + x2 + "," + y2 + "]";
+                }
+            };
+        },
         grid: function (ctx, colour, c2s, x1, y1, x2, y2, size) {
             ctx.fillStyle = "rgba(30, 30, 30, 1)";
             ctx.font = "normal 12px sans-serif";

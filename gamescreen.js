@@ -3,7 +3,8 @@ if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does 
 
 var _local = (function () {
 	return {
-		create: function(where, type, world, centerpoint, width, height,background){
+		create: function(where, type, world, centerpoint, viewportWidth, viewportHeight,background){
+			var screenWidth = viewportWidth, screenHeight = viewportHeight;
 			var screenCreator = function (where, type, world, width, height) {
 				var s = type($(where), world, width, height, background);
 
@@ -30,15 +31,30 @@ var _local = (function () {
 
 			this.size = function (width,height) {
 				this.remove();
-				this.sc = screenCreator(where, type, world, width, height,background);
-				return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2, background);
+				viewportWidth = width; screenWidth = width;
+				viewportHeight = height; screenHeight = height;
+				this.sc = screenCreator(where, type, world, viewportWidth, viewportHeight,background);
+				return this.sc.create(centerpoint[0] - screenWidth/2,
+					centerpoint[1] - screenHeight/2,
+					centerpoint[0] + screenWidth/2,
+					centerpoint[1] + screenHeight/2, background);
+			};
+
+			this.resize = function (_screenWidth, _screenHeight) {
+				screenWidth = _screenWidth;
+				screenHeight = _screenHeight;
+
+				return this.sc.create(centerpoint[0] - screenWidth/2,
+					centerpoint[1] - screenHeight/2,
+					centerpoint[0] + screenWidth/2,
+					centerpoint[1] + screenHeight/2, background);
 			};
 
 			this.move = function (x,y) {
 				centerpoint[0] += x;
 				centerpoint[1] += y;
 
-				return this.sc.create(centerpoint[0] - width/2, centerpoint[1] - height/2, centerpoint[0] + width/2, centerpoint[1] + height/2, background);
+				return this.sc.create(centerpoint[0] - screenWidth/2, centerpoint[1] - screenHeight/2, centerpoint[0] + screenWidth/2, centerpoint[1] + screenHeight/2, background);
 			};
 
 			this.center = function (x1, y1, x2, y2) {
@@ -121,6 +137,12 @@ var _local = (function () {
 				move: function (x,y) {
 					//screen = viewport.move(x1,y1,x2,y2);
 					screen = viewport.move(x,y);
+				},
+				size: function(width,height) {
+					screen = viewport.size(width,height);
+				},
+				resize: function(width,height) {
+					screen = viewport.resize(width,height);
 				},
 				console: screen.console
 			};

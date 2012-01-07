@@ -1,8 +1,8 @@
 Ticker = undefined; // hack
 
 var WORLD = 500;
-var SCREEN_WIDTH = 800;
-var SCREEN_HEIGHT = 400;
+var SCREEN_WIDTH = 1024;
+var SCREEN_HEIGHT = 768;
 var GRIDSIZE = 100;
 
 var SCREEN_NUMBER = 0;
@@ -22,11 +22,6 @@ var screens = [];
 
 var polygons = [];
 var backgroundColor;
-
-var screenTypes = [
-	[gamescreen.screens.backingCanvas, "Backing canvas"],
-	[gamescreen.screens.fullCanvas, "Full canvas"]
-];
 
 var prev;
 var drawAll = function (/* time */ time) {
@@ -58,10 +53,9 @@ $(function () {
 		});
 
 		var _new_viewports = [
-			new gamescreen.create($("#gamearea1"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN_WIDTH, SCREEN_HEIGHT, background)
-			/*new gamescreen.create($("#gamearea2"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN, background),
-			new gamescreen.create($("#gamearea3"), screenTypes[1][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN, background),
-			new gamescreen.create($("#gamearea4"), screenTypes[0][0], gamescreen.world(WORLD), [200,-200], SCREEN, SCREEN, background)*/
+			new gamescreen.create($("#gamearea1"), gamescreen.screens.scrollingCanvas, gamescreen.world(WORLD), [200,-200], SCREEN_WIDTH, SCREEN_HEIGHT, background)
+			//new gamescreen.create($("#gamearea2"), gamescreen.screens.fullCanvas, gamescreen.world(WORLD), [200,-200], SCREEN_WIDTH, SCREEN_HEIGHT, background)
+			//new gamescreen.create($("#gamearea3"), gamescreen.screens.backingCanvas, gamescreen.world(WORLD), [200,-200], SCREEN_WIDTH, SCREEN_HEIGHT, background)
 			], screen;
 		viewports = _new_viewports;
 
@@ -80,6 +74,7 @@ $(function () {
 					var xx = 0;
 
 					background = data.background;
+					//background = "#ff00ff";
 
 					polygons = [];
 
@@ -136,15 +131,33 @@ $(function () {
 	});
 	
 	KeyboardJS.bind.key("i", function () {
-		SCREEN += 64;
+		SCREEN_WIDTH += 64;
+		SCREEN_HEIGHT += 64;
 		gen();
 	});
 
 	KeyboardJS.bind.key("k", function () {
-		SCREEN -= 64;
+		SCREEN_WIDTH -= 64;
+		SCREEN_HEIGHT -= 64;
 		gen();
 	});
 
+	KeyboardJS.bind.key("u", function () {
+		SCREEN_WIDTH += 64;
+		SCREEN_HEIGHT += 64;
+		_(screens).map(function (screen) {
+			return screen.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		});
+	});
+	
+	KeyboardJS.bind.key("j", function () {
+		SCREEN_WIDTH -= 64;
+		SCREEN_HEIGHT -= 64;
+		_(screens).each(function (screen) {
+			return screen.resize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		});
+	});
+	
 	KeyboardJS.bind.key("shift + dash", function () {
 		drawing[0] -= 1;
 	});
