@@ -8,7 +8,7 @@ $(function () {
     var pos = [400, 0];
     var s = 50;
     var dir = ["left", "down"];
-    var grid = function (c2s, ctx, screen) {
+    var grid = function (screen, c2s, ctx) {
         gamescreen.util.grid(ctx, "rgb(0,0,0)", c2s, -WORLD, -WORLD, WORLD, WORLD, 100);
         
         ctx.fillStyle = "rgba(255,0,0,0.5)";
@@ -19,6 +19,9 @@ $(function () {
         ctx.lineTo(pos[0], pos[1]+s);
         ctx.closePath();
         ctx.fill();
+
+        screen.console.frame_log("Test");
+
     };
     
     var gs1 = new gamescreen.create($("#gamescreen1"),
@@ -51,7 +54,7 @@ $(function () {
         gs3.center(pos[0]+s/2, pos[1]+s/2);
         gs3.draw(time);
         gs4.draw(time);
-        
+
         if (dir[0] === "left") {
             pos[0] -= speedx;
         } else if (dir[0] === "right") {

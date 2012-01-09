@@ -115,7 +115,7 @@ var _local = (function () {
 				prev =  x;
 			}
 
-			screen.draw(draw);
+			screen.draw(_.bind(draw,{},screen));
 
 			screen.console.frame_log("Anim: " + Math.round(1000.0/elapsed, 2));
 			if (prevTime !== undefined) {
