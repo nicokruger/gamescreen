@@ -102,7 +102,7 @@ var _local = (function () {
 					prev =  x;
 				}
 
-				draw(screen, drawing, isDrawing, elapsed);
+				draw(screen, elapsed);
 
 				screen.console.frame_log("Anim: " + Math.round(1000.0/elapsed, 2));
 				if (prevTime !== undefined) {
@@ -127,11 +127,7 @@ var _local = (function () {
 					screen.console.frame_start();
 					var cp = viewport.getCenter();
 					screen.console.frame_log("S: " + cp[0] + "/" + cp[1]);
-					if (isDrawing) {
-						drawFunction(time);
-					} else {
-						screen.console.frame_log("Paused");
-					}
+					drawFunction(time);
 					screen.console.frame_end();
 				},
 				move: function (x,y) {
