@@ -7,13 +7,18 @@ http://inmytreeo.co.za/gapaint-vis is another demonstration.
 Library for use in 2D drawing/game application.
 
 Features:
-	* can have multiple screens on screen at the same time
-        * drawing functions are detached from screens, ie. drawing
-          is not tied to a specific screen. See demo for example.
-        * scrolling
-        * zooming
-        * diagnostic console per screen (for eg. FPS info)
-        * resizable during application runtime
+--------
+    - can have multiple screens on screen at the same time
+    - drawing functions are detached from screens, ie. drawing
+    - is not tied to a specific screen. See demo for example.
+    - scrolling
+    - zooming
+    - diagnostic console per screen (for eg. FPS info)
+    - resizable during application runtime
+
+Using
+-------
+Have a look at the included demo application.
 
 To run the demo app, just do (depending on your python version)
 
