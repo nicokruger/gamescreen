@@ -156,6 +156,9 @@ var _local = (function () {
 			center: function (x,y) {
 				screen = viewport.center(x,y);
 			},
+			remove: function() {
+				viewport.remove();
+			},
 			console: screen.console
 		};
 	};
