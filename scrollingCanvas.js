@@ -39,11 +39,9 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
                 game.extents.x2,
                 game.extents.y2);
             
-            var x_zoom = (x2-x1)/width;
-            var y_zoom = (y1-y2)/height;
+            var x_zoom = width/(x2-x1);
+            var y_zoom = height/(y1-y2);
 
-            _console.log("ScrollingCanvas: " + gamescreen.console.util.rect(x1,y1,x2,y2) + " proj onto " + gamescreen.console.util.rect(0,0,width,height));
-            _console.log("ScrollingCanvas: Zoom factors: " + gamescreen.console.util.point(x_zoom, y_zoom));
             return {
                 draw: function(d) {
                     gamescreen.util.Timer.start("FullCanvas");
@@ -53,7 +51,7 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
                     ctx.fillRect(0,0,width,height);
                     
                     gamescreen.util.Timer.substart("Draw");
-                    ctx.setTransform(x_zoom, 0, 0, y_zoom, -x1, y2);
+                    ctx.setTransform(x_zoom, 0, 0, y_zoom, -x1*x_zoom, y2*x_zoom);
                     d(c2s, ctx);
                     gamescreen.util.Timer.subend();
                     

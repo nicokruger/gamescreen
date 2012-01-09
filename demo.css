@@ -1,0 +1,50 @@
+.console-small {
+  color: white;
+  padding: 5px;
+  background-color: rgba(145,100,255,0.3);
+  z-index: 5;
+  overflow: hidden;
+  height: 60px;
+}
+
+.console-large {
+  color: white;
+  padding: 5px;
+  background-color: rgba(145,100,255,0.3);
+  z-index: 5;
+  overflow: hidden;
+  height: 400px;
+}
+
+.console-permanent {
+  height: 100%;
+  overflow: scroll;
+  white-space: pre;
+  font-family: Courier, monospace;
+  font-size: small;
+}
+
+.console-frameinfo {
+  white-space: pre;
+  font-family: Courier, monospace;
+}
+
+.console-frameinfo_entry {
+  margin-left:5px;
+}
+
+.console-log {
+  display: block;
+}
+
+.gamecanvas {
+  background-color: rgba(145,100,255,0.3);
+  z-index: 0;
+}
+
+.gamearea {
+  margin: 20px;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+}
