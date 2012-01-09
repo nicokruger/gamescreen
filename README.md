@@ -2,7 +2,7 @@ Gamescreen
 ----------
 Go to http://inmytree.co.za/gamescreen/demo.html to see the demo app.
 
-http://inmytreeo.co.za/gapaint-vis is another demonstration.
+http://inmytree.co.za/gapaint-vis is another demonstration.
 
 Library for use in 2D drawing/game application.
 
