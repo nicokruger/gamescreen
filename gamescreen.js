@@ -12,17 +12,26 @@ var _local = (function () {
 			return screenWrapper(viewport, viewSize[0], viewSize[1], drawerFunction, background);
 		},
 
-		world: function (worldsize) {
-			return {
-				extents: {
-					x1: -worldsize,
-					y1: -worldsize,
-					x2: worldsize,
-					y2: worldsize
-				},
-				width: worldsize*2,
-				height: worldsize*2
-			};
+		world: function (x1,y1,x2,y2) {
+			if (typeof(y1) === "undefined") {
+				var worldsize = x1;
+				return {
+					extents: {
+						x1: -worldsize,
+						y1: -worldsize,
+						x2: worldsize,
+						y2: worldsize
+					},
+					width: worldsize*2,
+					height: worldsize*2
+				};
+			} else {
+				return {
+					extents: { x1:x1, y1:y1, x2:x2, y2:y2 },
+					width: x2-x1,
+					height: y2-y1
+				};
+			}
 		}
 
 	};
