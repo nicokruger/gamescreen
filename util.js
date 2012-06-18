@@ -83,6 +83,27 @@ gamescreen.util = (function() {
             };
         },
 
+        Screen: function(x1, y1, x2, y2) {
+            
+            return {
+                cartesian2screenx: function(x) {
+                    return x - x1;
+                },
+                cartesian2screeny: function(y) {
+                    return y - y1;
+                },
+                width: function() {
+                    return x2 - x1;
+                },
+                height: function() {
+                    return y2 - y1;
+                },
+                toString: function() {
+                    return "[" + x1 + "," + y1 + "] x [" + x2 + "," + y2 + "]";
+                }
+                
+            };
+        },
         Identity: function (x1,y1,x2,y2) {
             return {
                 cartesian2screenx: function(x) {

@@ -41,6 +41,7 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
             
             var x_zoom = width/(x2-x1);
             var y_zoom = height/(y1-y2);
+            var angle = Math.PI;
 
             return {
                 draw: function(d) {
@@ -51,7 +52,11 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
                     ctx.fillRect(0,0,width,height);
                     
                     gamescreen.util.Timer.substart("Draw");
-                    ctx.setTransform(x_zoom, 0, 0, y_zoom, -x1*x_zoom, y2*x_zoom);
+                    var t = new Transform();
+                    t.translate(-x1,y2);
+                    t.scale(x_zoom,y_zoom);
+
+                    ctx.setTransform(t.m[0], t.m[1], t.m[2], t.m[3], t.m[4], t.m[5]);
                     d(c2s, ctx);
                     gamescreen.util.Timer.subend();
                     

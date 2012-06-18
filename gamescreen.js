@@ -4,11 +4,11 @@ if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does 
 var _local = (function () {
 	var exports = {
 
-		create: function (where, viewSize, worldSize, drawerFunction, background) {
+		create: function (screen, where, viewSize, worldSize, drawerFunction, background) {
 			var cpx = (worldSize.extents.x1 + worldSize.extents.x2) / 2.0;
 			var cpy = (worldSize.extents.y1 + worldSize.extents.y2) / 2.0;
 
-			var viewport = new internalCreate(where, gamescreen.screens.scrollingCanvas, worldSize, [cpx,cpy], viewSize[0], viewSize[1], background);
+			var viewport = new internalCreate(where, screen, worldSize, [cpx,cpy], viewSize[0], viewSize[1], background);
 			return screenWrapper(viewport, viewSize[0], viewSize[1], drawerFunction, background);
 		},
 

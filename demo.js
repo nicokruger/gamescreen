@@ -24,23 +24,23 @@ $(function () {
 
     };
     
-    var gs1 = new gamescreen.create($("#gamescreen1"),
+    var gs1 = new gamescreen.create(gamescreen.screens.backingCanvas, $("#gamescreen1"),
         [SCREEN_WIDTH, SCREEN_HEIGHT],
         gamescreen.world(WORLD),
         grid, background);
     gs1.resize(WORLD*2, WORLD*2);
 
-    var gs2 = new gamescreen.create($("#gamescreen2"),
+    var gs2 = new gamescreen.create(gamescreen.screens.scrollingCanvas, $("#gamescreen2"),
         [SCREEN_WIDTH, SCREEN_HEIGHT],
         gamescreen.world(WORLD),
         grid, background);
-    var gs3 = new gamescreen.create($("#gamescreen3"),
+    var gs3 = new gamescreen.create(gamescreen.screens.fullCanvas, $("#gamescreen3"),
         [SCREEN_WIDTH, SCREEN_HEIGHT],
         gamescreen.world(WORLD),
         grid, background);
     gs3.resize(100,100);
 
-    var gs4 = new gamescreen.create($("#gamescreen4"),
+    var gs4 = new gamescreen.create(gamescreen.screens.scrollingCanvas, $("#gamescreen4"),
         [1024, 768],
         gamescreen.world(WORLD),
         grid, background);

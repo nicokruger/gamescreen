@@ -1,7 +1,7 @@
 VERSION = 0.0.1
 LIB = dist/gamescreen-$(VERSION).js
 
-SCRIPTS = backingCanvas.js fullCanvas.js scrollingCanvas.js util.js console.js gamescreen.js
+SCRIPTS = backingCanvas.js fullCanvas.js scrollingCanvas.js util.js console.js gamescreen.js transform.js
 $(LIB): $(SCRIPTS)
 	mkdir -p dist
 	rm -rf .lib.tmp

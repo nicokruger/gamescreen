@@ -30,7 +30,7 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
         create: function(sectors, x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
-            var c2s = new gamescreen.util.Cartesian2Screen(game.extents.x1 - half_viewportwidth,
+            var c2s = new gamescreen.util.Screen(game.extents.x1 - half_viewportwidth,
                 game.extents.y1 - half_viewportheight,
                 game.extents.x2 + half_viewportwidth,
                 game.extents.y2 + half_viewportheight);
@@ -38,13 +38,13 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
             return  {
                 draw: function(d) {
 
-/*                    _console.frame_log(gamescreen.console.util.rect(
+                    _console.frame_log(gamescreen.console.util.rect(
                         c2s.cartesian2screeny(x1),
                         c2s.cartesian2screeny(y2),
                         width,
                         height
                     ));
-*/
+
                     gamescreen.util.Timer.start("BackingCanvas");
 
                     gamescreen.util.Timer.substart("clean back");
@@ -52,7 +52,7 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
                     ctx_back.fillStyle = bg;
                     ctx_back.fillRect(
                         c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y2),
+                        c2s.cartesian2screeny(y1),
                         width,
                         height
                     );
@@ -66,7 +66,7 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
                     ctx_back.globalCompositeOperation = "none";
                     ctx_front.drawImage(ctx_back.canvas,
                         c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y2),
+                        c2s.cartesian2screeny(y1),
                         width,
                         height,
                         0, 0,
