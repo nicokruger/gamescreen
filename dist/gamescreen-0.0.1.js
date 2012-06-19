@@ -30,7 +30,7 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
         create: function(sectors, x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
-            var c2s = new gamescreen.util.Cartesian2Screen(game.extents.x1 - half_viewportwidth,
+            var c2s = new gamescreen.util.Screen(game.extents.x1 - half_viewportwidth,
                 game.extents.y1 - half_viewportheight,
                 game.extents.x2 + half_viewportwidth,
                 game.extents.y2 + half_viewportheight);
@@ -38,13 +38,13 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
             return  {
                 draw: function(d) {
 
-/*                    _console.frame_log(gamescreen.console.util.rect(
+                    _console.frame_log(gamescreen.console.util.rect(
                         c2s.cartesian2screeny(x1),
                         c2s.cartesian2screeny(y2),
                         width,
                         height
                     ));
-*/
+
                     gamescreen.util.Timer.start("BackingCanvas");
 
                     gamescreen.util.Timer.substart("clean back");
@@ -52,7 +52,7 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
                     ctx_back.fillStyle = bg;
                     ctx_back.fillRect(
                         c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y2),
+                        c2s.cartesian2screeny(y1),
                         width,
                         height
                     );
@@ -66,7 +66,7 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
                     ctx_back.globalCompositeOperation = "none";
                     ctx_front.drawImage(ctx_back.canvas,
                         c2s.cartesian2screenx(x1),
-                        c2s.cartesian2screeny(y2),
+                        c2s.cartesian2screeny(y1),
                         width,
                         height,
                         0, 0,
@@ -191,18 +191,24 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
         create: function(sectors, x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
-            var c2s = new gamescreen.util.Identity(game.extents.x1,
+            var c2s = new gamescreen.util.Screen(game.extents.x1,
                 game.extents.y1,
                 game.extents.x2,
                 game.extents.y2);
             
             var x_zoom = width/(x2-x1);
-            var y_zoom = height/(y1-y2);
+            var y_zoom = height/(y2-y1);
             var angle = Math.PI;
 
             return {
                 draw: function(d) {
                     gamescreen.util.Timer.start("FullCanvas");
+                    _console.frame_log(gamescreen.console.util.rect(
+                        x_zoom,
+                        y_zoom,
+                        width,
+                        height
+                    ));
 
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.fillStyle = bg;
@@ -210,7 +216,7 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
                     
                     gamescreen.util.Timer.substart("Draw");
                     var t = new Transform();
-                    t.translate(-x1,y2);
+                    t.translate(-x1,y1);
                     t.scale(x_zoom,y_zoom);
 
                     ctx.setTransform(t.m[0], t.m[1], t.m[2], t.m[3], t.m[4], t.m[5]);
@@ -224,8 +230,6 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
         }
     };
 };
-
-
 
 var gamescreen;
 if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does not exist
@@ -312,6 +316,27 @@ gamescreen.util = (function() {
             };
         },
 
+        Screen: function(x1, y1, x2, y2) {
+            
+            return {
+                cartesian2screenx: function(x) {
+                    return x - x1;
+                },
+                cartesian2screeny: function(y) {
+                    return y - y1;
+                },
+                width: function() {
+                    return x2 - x1;
+                },
+                height: function() {
+                    return y2 - y1;
+                },
+                toString: function() {
+                    return "[" + x1 + "," + y1 + "] x [" + x2 + "," + y2 + "]";
+                }
+                
+            };
+        },
         Identity: function (x1,y1,x2,y2) {
             return {
                 cartesian2screenx: function(x) {

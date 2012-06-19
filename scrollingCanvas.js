@@ -34,18 +34,23 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
         create: function(sectors, x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
-            var c2s = new gamescreen.util.Identity(game.extents.x1,
+            var c2s = new gamescreen.util.Screen(game.extents.x1,
                 game.extents.y1,
                 game.extents.x2,
                 game.extents.y2);
-            
+            var c2s2 = new gamescreen.util.Identity(game.extents.x1,
+                game.extents.y1,
+                game.extents.x2,
+                game.extents.y2);
+
             var x_zoom = width/(x2-x1);
-            var y_zoom = height/(y1-y2);
+            var y_zoom = height/(y2-y1);
             var angle = Math.PI;
 
             return {
                 draw: function(d) {
                     gamescreen.util.Timer.start("FullCanvas");
+                    //_console.frame_log(gamescreen.console.util.rect(c2s.cartesian2screenx(x1),c2s.cartesian2screeny(y1), width, height));
 
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.fillStyle = bg;
@@ -53,20 +58,28 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
                     
                     gamescreen.util.Timer.substart("Draw");
                     var t = new Transform();
-                    t.translate(-x1,y2);
-                    t.scale(x_zoom,y_zoom);
+                    //t.scale(x_zoom,y_zoom);
+                    t.translate(c2s.cartesian2screenx(x1),c2s.cartesian2screeny(y1));
+
 
                     ctx.setTransform(t.m[0], t.m[1], t.m[2], t.m[3], t.m[4], t.m[5]);
-                    d(c2s, ctx);
+                    d(c2s2, ctx);
                     gamescreen.util.Timer.subend();
                     
                     gamescreen.util.Timer.end();
                 },
+                convertCanvasToScreen: function (p) {
+                    return p;
+                },
                 console: _console
             };
+        },
+        mousemove: function (f) {
+            $(canvas).mousemove(f);
+        },
+        click: function (f) {
+            $(canvas).click(f);
         }
     };
 };
-
-
 

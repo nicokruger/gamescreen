@@ -34,7 +34,7 @@ $(function () {
         [SCREEN_WIDTH, SCREEN_HEIGHT],
         gamescreen.world(WORLD),
         grid, background);
-    var gs3 = new gamescreen.create(gamescreen.screens.fullCanvas, $("#gamescreen3"),
+    var gs3 = new gamescreen.create(gamescreen.screens.backingCanvas, $("#gamescreen3"),
         [SCREEN_WIDTH, SCREEN_HEIGHT],
         gamescreen.world(WORLD),
         grid, background);
@@ -45,15 +45,20 @@ $(function () {
         gamescreen.world(WORLD),
         grid, background);
     gs4.resize(WORLD*3,WORLD*3);
+    gs4.onMouseMove(function (e) {
+        console.log("eh?: " + JSON.stringify(_(e).keys()));
+        gs4.console.log("Mouse move: [" + e.x + "/" + e.y + "]");
+    });
 
-    var speedx = 1;
-    var speedy = 1;
+    var speedx = 0.1;
+    var speedy = 0.1;
     var tick = function (time) {
         gs1.draw(time);
         gs2.draw(time);
         gs3.center(pos[0]+s/2, pos[1]+s/2);
         gs3.draw(time);
         gs4.draw(time);
+        gs4.center(pos[0]+s/2, pos[1]+s/2);
 
         if (dir[0] === "left") {
             pos[0] -= speedx;
@@ -69,19 +74,19 @@ $(function () {
 
         if (pos[0] < -WORLD) {
             dir[0] = "right";
-            speedx = Math.floor(Math.random() * 10 + 2);
+            speedx = Math.floor(Math.random() * 1);
         }
         if (pos[0] > WORLD) {
             dir[0] = "left";
-            speedx = Math.floor(Math.random() * 10 + 2);
+            speedx = Math.floor(Math.random() * 1);
         }
         if (pos[1] < -WORLD) {
             dir[1] = "up";
-            speedy = Math.floor(Math.random() * 10 + 2);
+            speedy = Math.floor(Math.random() * 1);
         }
         if (pos[1] > WORLD) {
             dir[1] = "down";
-            speedy = Math.floor(Math.random() * 10 + 2);
+            speedy = Math.floor(Math.random() * 1);
         }
 
 

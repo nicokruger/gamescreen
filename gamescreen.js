@@ -41,7 +41,7 @@ var _local = (function () {
 		var screenCreator = function (where, type, world, width, height) {
 			var s = type($(where), world, width, height, background);
 
-			return {
+			return _.extend({}, s, {
 				create: function (x1, y1, x2, y2, callback) {
 					var _s = s.create([], x1, y1, x2, y2);
 					if (typeof(callback) !== "undefined") {
@@ -52,11 +52,10 @@ var _local = (function () {
 
 				cleanup: function () {
 					// TODO: remove from the screen list here!
-
 					return s.cleanup();
 				}
 
-			};
+			});
 		};
 
 		this.remove = function () {
@@ -113,6 +112,17 @@ var _local = (function () {
 
 		this.onViewChange = function (callback) {
 			this.viewChangeCallback = callback;
+		};
+		this.onMouseMove = function (callback) {
+			this.mouseMoveCallback = callback;
+			this.sc.mousemove(function (e) {
+				callback(getPosition(e));
+			});
+		};
+
+		this.onMouseClick = function (callback) {
+			this.mouseClickCallback = callback;
+			this.sc.click(callback);
 		};
 	};
 
@@ -185,6 +195,12 @@ var _local = (function () {
 			},
 			onViewChange: function (callback) {
 				viewport.onViewChange(callback);
+			},
+			onMouseMove: function (callback) {
+				viewport.onMouseMove(callback);
+			},
+			onMouseClick: function (callback) {
+				viewport.onMouseClick(callback);
 			},
 			console: screen.console
 		};
