@@ -4,11 +4,11 @@ if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does 
 var _local = (function () {
 	var exports = {
 
-		create: function (screen, where, viewSize, worldSize, drawerFunction, background) {
+		create: function (screen, where, viewSize, worldSize, drawerFunction, background, callbacks) {
 			var cpx = (worldSize.extents.x1 + worldSize.extents.x2) / 2.0;
 			var cpy = (worldSize.extents.y1 + worldSize.extents.y2) / 2.0;
 
-			var viewport = new internalCreate(where, screen, worldSize, [cpx,cpy], viewSize[0], viewSize[1], background);
+			var viewport = new internalCreate(where, screen, worldSize, [cpx,cpy], viewSize[0], viewSize[1], background, callbacks);
 			return screenWrapper(viewport, viewSize[0], viewSize[1], drawerFunction, background);
 		},
 
@@ -36,14 +36,14 @@ var _local = (function () {
 
 	};
 
-	var internalCreate = function(where, type, world, centerpoint, viewportWidth, viewportHeight,background){
+	var internalCreate = function(where, type, world, centerpoint, viewportWidth, viewportHeight,background, callbacks){
 		var screenWidth = viewportWidth, screenHeight = viewportHeight;
 		var screenCreator = function (where, type, world, width, height) {
-			var s = type($(where), world, width, height, background);
+			var s = type($(where), world, width, height, background, callbacks);
 
 			return _.extend({}, s, {
-				create: function (x1, y1, x2, y2, callback) {
-					var _s = s.create([], x1, y1, x2, y2);
+				create: function (x1, y1, x2, y2, createCallback) {
+					var _s = s.create(x1, y1, x2, y2);
 					if (typeof(callback) !== "undefined") {
 						callback(x1,y1,x2,y2);
 					}
@@ -115,14 +115,10 @@ var _local = (function () {
 		};
 		this.onMouseMove = function (callback) {
 			this.mouseMoveCallback = callback;
-			this.sc.mousemove(function (e) {
-				callback(getPosition(e));
-			});
 		};
 
 		this.onMouseClick = function (callback) {
 			this.mouseClickCallback = callback;
-			this.sc.click(callback);
 		};
 	};
 

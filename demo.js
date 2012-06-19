@@ -41,14 +41,18 @@ $(function () {
     gs3.resize(100,100);
 
     var gs4 = new gamescreen.create(gamescreen.screens.scrollingCanvas, $("#gamescreen4"),
-        [1024, 768],
+        [768, 768],
         gamescreen.world(WORLD),
-        grid, background);
-    gs4.resize(WORLD*3,WORLD*3);
-    gs4.onMouseMove(function (e) {
-        console.log("eh?: " + JSON.stringify(_(e).keys()));
-        gs4.console.log("Mouse move: [" + e.x + "/" + e.y + "]");
-    });
+        grid, background, {
+            mousemove:function (e) {
+                console.log("eh?: " + JSON.stringify(_(e).keys()));
+                gs4.console.log("Mouse move: [" + e.x + "/" + e.y + "]");
+            },
+            click: function (e) {
+
+            }
+        });
+    //gs4.resize(WORLD*3,WORLD*3);
 
     var speedx = 0.1;
     var speedy = 0.1;

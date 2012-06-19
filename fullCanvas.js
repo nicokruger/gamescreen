@@ -32,7 +32,7 @@ gamescreen.screens.fullCanvas = function(where, game, width, height, background)
             consoleDiv.remove();
         },
         
-        create: function(sectors, x1, y1, x2, y2) {
+        create: function(x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
             var c2s = new gamescreen.util.Cartesian2Screen(game.extents.x1 - half_viewportwidth,
