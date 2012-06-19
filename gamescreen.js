@@ -113,13 +113,6 @@ var _local = (function () {
 		this.onViewChange = function (callback) {
 			this.viewChangeCallback = callback;
 		};
-		this.onMouseMove = function (callback) {
-			this.mouseMoveCallback = callback;
-		};
-
-		this.onMouseClick = function (callback) {
-			this.mouseClickCallback = callback;
-		};
 	};
 
 	var screenWrapper = function (viewport, width, height, draw, background) {
@@ -191,12 +184,6 @@ var _local = (function () {
 			},
 			onViewChange: function (callback) {
 				viewport.onViewChange(callback);
-			},
-			onMouseMove: function (callback) {
-				viewport.onMouseMove(callback);
-			},
-			onMouseClick: function (callback) {
-				viewport.onMouseClick(callback);
 			},
 			console: screen.console
 		};

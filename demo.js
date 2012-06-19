@@ -45,11 +45,10 @@ $(function () {
         gamescreen.world(WORLD),
         grid, background, {
             mousemove:function (e) {
-                console.log("eh?: " + JSON.stringify(_(e).keys()));
                 gs4.console.log("Mouse move: [" + e.x + "/" + e.y + "]");
             },
             click: function (e) {
-
+                gs4.console.log("Click: [" + e.x + "/" + e.y + "]");
             }
         });
     //gs4.resize(WORLD*3,WORLD*3);

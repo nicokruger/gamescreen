@@ -27,7 +27,7 @@ gamescreen.screens.backingCanvas = function(where, game, width, height, backgrou
         },
                 
 
-        create: function(sectors, x1, y1, x2, y2) {
+        create: function(x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
             var c2s = new gamescreen.util.Screen(game.extents.x1 - half_viewportwidth,
@@ -118,7 +118,7 @@ gamescreen.screens.fullCanvas = function(where, game, width, height, background)
             consoleDiv.remove();
         },
         
-        create: function(sectors, x1, y1, x2, y2) {
+        create: function(x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
             var c2s = new gamescreen.util.Cartesian2Screen(game.extents.x1 - half_viewportwidth,
@@ -159,7 +159,10 @@ var gamescreen;
 if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does not exist
 if (!gamescreen.screens) gamescreen.screens = {};
     
-gamescreen.screens.scrollingCanvas = function(where, game, width, height, background) {
+gamescreen.screens.scrollingCanvas = function(where, game, width, height, background, callbacks) {
+    
+    var c2s;
+
     var bg = background === undefined ? "#ffffff" : background;
     var game_width = game.extents.x2 - game.extents.x1 + width;
     var game_height = game.extents.y2 - game.extents.y1 + height;
@@ -177,8 +180,36 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
     var consoleDiv = $('<div></div>').appendTo($(where));
     consoleDiv.width(width);
     var _console = gamescreen.console($(consoleDiv));
-            
-    
+        
+    if (callbacks) {
+        if (callbacks.mousemove) {
+            $(canvas).mousemove(function (e) {
+                var p = gamescreen.util.convertMouseToCanvas(e);
+
+                var cx = (c2s.x1+c2s.x2)/2.0,
+                        cy = (c2s.y1+c2s.y2)/2.0,
+                        scx = (width)/2.0,
+                        scy = (height)/2.0;
+
+                var perc_x = p.x / width,
+                    perc_y = p.y / height,
+                    perc_screen_x = (perc_x) * (c2s.x2-c2s.x1) + c2s.x1,
+                    perc_screen_y = (perc_y) * (c2s.y2-c2s.y1) + c2s.y1;
+
+                //p.x = game.extents.x1 + c2s.x1 + perc_screen_x;
+                //p.y = game.extends.y1 + c2s.y1 + perc_screen_x;
+
+                p.x = perc_screen_x;
+                p.y = perc_screen_y;
+                callbacks.mousemove(p);
+            });
+        } else if (callbacks.click) {
+            $(canvas).click(function (e) {
+                var p = util.convertCanvasToScreen(e);
+                callbacks.click(p);
+            });
+        }
+    }
     var ctx = canvas[0].getContext("2d"); // don't like the [0] subscript - some jQuery thing I don't understand?
     
     return {
@@ -188,14 +219,18 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
             consoleDiv.remove();
         },
         
-        create: function(sectors, x1, y1, x2, y2) {
+        create: function(x1, y1, x2, y2) {
             var half_viewportwidth = Math.round(width/2, 0);
             var half_viewportheight = Math.round(height/2, 0);
-            var c2s = new gamescreen.util.Screen(game.extents.x1,
+            c2s = new gamescreen.util.Screen(x1,
+                y1,
+                x2,
+                y2);
+            var c2s2 = new gamescreen.util.Identity(game.extents.x1,
                 game.extents.y1,
                 game.extents.x2,
                 game.extents.y2);
-            
+
             var x_zoom = width/(x2-x1);
             var y_zoom = height/(y2-y1);
             var angle = Math.PI;
@@ -203,27 +238,30 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
             return {
                 draw: function(d) {
                     gamescreen.util.Timer.start("FullCanvas");
-                    _console.frame_log(gamescreen.console.util.rect(
-                        x_zoom,
-                        y_zoom,
-                        width,
-                        height
-                    ));
-
+                    
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
                     ctx.fillStyle = bg;
                     ctx.fillRect(0,0,width,height);
                     
                     gamescreen.util.Timer.substart("Draw");
                     var t = new Transform();
-                    t.translate(-x1,y1);
-                    t.scale(x_zoom,y_zoom);
+
+                    var cx = (x1+x2)/2.0,
+                        cy = (y1+y2)/2.0,
+                        scx = (width)/2.0,
+                        scy = (height)/2.0;
+                    _console.frame_log(c2s);
+                    t.translate(scx - cx, scy - cy);
+
 
                     ctx.setTransform(t.m[0], t.m[1], t.m[2], t.m[3], t.m[4], t.m[5]);
-                    d(c2s, ctx);
+                    d(c2s2, ctx);
                     gamescreen.util.Timer.subend();
                     
                     gamescreen.util.Timer.end();
+                },
+                convertCanvasToScreen: function (p) {
+                    return p;
                 },
                 console: _console
             };
@@ -333,7 +371,11 @@ gamescreen.util = (function() {
                 },
                 toString: function() {
                     return "[" + x1 + "," + y1 + "] x [" + x2 + "," + y2 + "]";
-                }
+                },
+                x1:x1,
+                y1:y1,
+                x2:x2,
+                y2:y2
                 
             };
         },
@@ -368,6 +410,27 @@ gamescreen.util = (function() {
                 }
             }
             
+        },
+        convertMouseToCanvas: function (e) {
+
+            //this section is from http://www.quirksmode.org/js/events_properties.html
+            var targ;
+            if (!e)
+                e = window.event;
+            if (e.target)
+                targ = e.target;
+            else if (e.srcElement)
+                targ = e.srcElement;
+            if (targ.nodeType == 3) // defeat Safari bug
+                targ = targ.parentNode;
+
+            // jQuery normalizes the pageX and pageY
+            // pageX,Y are the mouse positions relative to the document
+            // offset() returns the position of the element relative to the document
+            var x = e.pageX - $(targ).offset().left;
+            var y = e.pageY - $(targ).offset().top;
+
+            return {"x": x, "y": y};
         }
 
     };
@@ -445,11 +508,11 @@ if (!gamescreen) gamescreen = {}; // initialise the top-level module if it does 
 var _local = (function () {
 	var exports = {
 
-		create: function (screen, where, viewSize, worldSize, drawerFunction, background) {
+		create: function (screen, where, viewSize, worldSize, drawerFunction, background, callbacks) {
 			var cpx = (worldSize.extents.x1 + worldSize.extents.x2) / 2.0;
 			var cpy = (worldSize.extents.y1 + worldSize.extents.y2) / 2.0;
 
-			var viewport = new internalCreate(where, screen, worldSize, [cpx,cpy], viewSize[0], viewSize[1], background);
+			var viewport = new internalCreate(where, screen, worldSize, [cpx,cpy], viewSize[0], viewSize[1], background, callbacks);
 			return screenWrapper(viewport, viewSize[0], viewSize[1], drawerFunction, background);
 		},
 
@@ -477,14 +540,14 @@ var _local = (function () {
 
 	};
 
-	var internalCreate = function(where, type, world, centerpoint, viewportWidth, viewportHeight,background){
+	var internalCreate = function(where, type, world, centerpoint, viewportWidth, viewportHeight,background, callbacks){
 		var screenWidth = viewportWidth, screenHeight = viewportHeight;
 		var screenCreator = function (where, type, world, width, height) {
-			var s = type($(where), world, width, height, background);
+			var s = type($(where), world, width, height, background, callbacks);
 
-			return {
-				create: function (x1, y1, x2, y2, callback) {
-					var _s = s.create([], x1, y1, x2, y2);
+			return _.extend({}, s, {
+				create: function (x1, y1, x2, y2, createCallback) {
+					var _s = s.create(x1, y1, x2, y2);
 					if (typeof(callback) !== "undefined") {
 						callback(x1,y1,x2,y2);
 					}
@@ -493,11 +556,10 @@ var _local = (function () {
 
 				cleanup: function () {
 					// TODO: remove from the screen list here!
-
 					return s.cleanup();
 				}
 
-			};
+			});
 		};
 
 		this.remove = function () {
@@ -554,6 +616,13 @@ var _local = (function () {
 
 		this.onViewChange = function (callback) {
 			this.viewChangeCallback = callback;
+		};
+		this.onMouseMove = function (callback) {
+			this.mouseMoveCallback = callback;
+		};
+
+		this.onMouseClick = function (callback) {
+			this.mouseClickCallback = callback;
 		};
 	};
 
@@ -626,6 +695,12 @@ var _local = (function () {
 			},
 			onViewChange: function (callback) {
 				viewport.onViewChange(callback);
+			},
+			onMouseMove: function (callback) {
+				viewport.onMouseMove(callback);
+			},
+			onMouseClick: function (callback) {
+				viewport.onMouseClick(callback);
 			},
 			console: screen.console
 		};

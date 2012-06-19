@@ -23,33 +23,24 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
     var consoleDiv = $('<div></div>').appendTo($(where));
     consoleDiv.width(width);
     var _console = gamescreen.console($(consoleDiv));
-        
+
     if (callbacks) {
+        var convertMouseToWorld = function (e) {
+            var p = gamescreen.util.convertMouseToCanvas(e),
+                perc_x = p.x / width,
+                perc_y = p.y / height,
+                perc_screen_x = (perc_x) * (c2s.x2-c2s.x1) + c2s.x1,
+                perc_screen_y = (perc_y) * (c2s.y2-c2s.y1) + c2s.y1;
+            return {x:perc_screen_x,y:perc_screen_y};
+        };
         if (callbacks.mousemove) {
             $(canvas).mousemove(function (e) {
-                var p = gamescreen.util.convertMouseToCanvas(e);
-
-                var cx = (c2s.x1+c2s.x2)/2.0,
-                        cy = (c2s.y1+c2s.y2)/2.0,
-                        scx = (width)/2.0,
-                        scy = (height)/2.0;
-
-                var perc_x = p.x / width,
-                    perc_y = p.y / height,
-                    perc_screen_x = (perc_x) * (c2s.x2-c2s.x1) + c2s.x1,
-                    perc_screen_y = (perc_y) * (c2s.y2-c2s.y1) + c2s.y1;
-
-                //p.x = game.extents.x1 + c2s.x1 + perc_screen_x;
-                //p.y = game.extends.y1 + c2s.y1 + perc_screen_x;
-
-                p.x = perc_screen_x;
-                p.y = perc_screen_y;
-                callbacks.mousemove(p);
+                callbacks.mousemove(convertMouseToWorld(e));
             });
-        } else if (callbacks.click) {
+        }
+        if (callbacks.click) {
             $(canvas).click(function (e) {
-                var p = util.convertCanvasToScreen(e);
-                callbacks.click(p);
+                callbacks.click(convertMouseToWorld(e));
             });
         }
     }
@@ -88,6 +79,7 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
                     
                     gamescreen.util.Timer.substart("Draw");
                     var t = new Transform();
+                    //t.scale(x_zoom,y_zoom);
 
                     var cx = (x1+x2)/2.0,
                         cy = (y1+y2)/2.0,
