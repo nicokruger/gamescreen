@@ -56,6 +56,9 @@ $(function () {
     var speedx = 0.1;
     var speedy = 0.1;
     var tick = function (time) {
+	if (!time) {
+		time = (new Date()).getTime();
+	}
         gs1.draw(time);
         gs2.draw(time);
         gs3.center(pos[0]+s/2, pos[1]+s/2);
