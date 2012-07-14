@@ -36,14 +36,12 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
         if (callbacks.mousemove) {
             $(canvas).mousemove(function (e) {
                 callbacks.mousemove(convertMouseToWorld(e));
-                e.stopPropogation();
                 e.preventDefault();
             });
         }
         if (callbacks.click) {
             $(canvas).click(function (e) {
                 callbacks.click(convertMouseToWorld(e));
-                e.stopPropogation();
                 e.preventDefault();
             });
         }

@@ -513,7 +513,7 @@ var _local = (function () {
 			var cpy = (worldSize.extents.y1 + worldSize.extents.y2) / 2.0;
 
 			var viewport = new internalCreate(where, screen, worldSize, [cpx,cpy], viewSize[0], viewSize[1], background, callbacks);
-			return screenWrapper(viewport, viewSize[0], viewSize[1], drawerFunction, background);
+			return new screenWrapper(viewport, viewSize[0], viewSize[1], drawerFunction, background);
 		},
 
 		world: function (x1,y1,x2,y2) {
@@ -541,6 +541,7 @@ var _local = (function () {
 	};
 
 	var internalCreate = function(where, type, world, centerpoint, viewportWidth, viewportHeight,background, callbacks){
+		var self = this;
 		var screenWidth = viewportWidth, screenHeight = viewportHeight;
 		var screenCreator = function (where, type, world, width, height) {
 			var s = type($(where), world, width, height, background, callbacks);
@@ -563,51 +564,51 @@ var _local = (function () {
 		};
 
 		this.remove = function () {
-			if (typeof(this.sc) !== "undefined") {
-				this.sc.cleanup();
+			if (typeof(self.sc) !== "undefined") {
+				self.sc.cleanup();
 			}
 		};
 
 		this.size = function (width,height) {
-			this.remove();
+			self.remove();
 			viewportWidth = width; screenWidth = width;
 			viewportHeight = height; screenHeight = height;
-			this.sc = screenCreator(where, type, world, viewportWidth, viewportHeight,background);
-			return this.sc.create(centerpoint[0] - screenWidth/2,
+			self.sc = screenCreator(where, type, world, viewportWidth, viewportHeight,background);
+			return self.sc.create(centerpoint[0] - screenWidth/2,
 				centerpoint[1] - screenHeight/2,
 				centerpoint[0] + screenWidth/2,
 				centerpoint[1] + screenHeight/2,
-				this.viewChangeCallback);
+				self.viewChangeCallback);
 		};
 
 		this.resize = function (_screenWidth, _screenHeight) {
 			screenWidth = _screenWidth;
 			screenHeight = _screenHeight;
 
-			return this.sc.create(centerpoint[0] - screenWidth/2,
+			return self.sc.create(centerpoint[0] - screenWidth/2,
 				centerpoint[1] - screenHeight/2,
 				centerpoint[0] + screenWidth/2,
-				centerpoint[1] + screenHeight/2, this.viewChangeCallback);
+				centerpoint[1] + screenHeight/2, self.viewChangeCallback);
 		};
 
 		this.move = function (x,y) {
 			centerpoint[0] += x;
 			centerpoint[1] += y;
 
-			return this.sc.create(centerpoint[0] - screenWidth/2,
+			return self.sc.create(centerpoint[0] - screenWidth/2,
 				centerpoint[1] - screenHeight/2,
 				centerpoint[0] + screenWidth/2,
 				centerpoint[1] + screenHeight/2,
-				this.viewChangeCallback);
+				self.viewChangeCallback);
 		};
 
 		this.center = function (x, y) {
 			centerpoint[0] = x;
 			centerpoint[1] = y;
-			return this.sc.create(centerpoint[0] - screenWidth/2,
+			return self.sc.create(centerpoint[0] - screenWidth/2,
 				centerpoint[1] - screenHeight/2,
 				centerpoint[0] + screenWidth/2, centerpoint[1] + screenHeight/2,
-				this.viewChangeCallback);
+				self.viewChangeCallback);
 		};
 
 		this.getCenter = function () {
@@ -615,26 +616,29 @@ var _local = (function () {
 		};
 
 		this.onViewChange = function (callback) {
-			this.viewChangeCallback = callback;
+			self.viewChangeCallback = callback;
 		};
 	};
 
 	var screenWrapper = function (viewport, width, height, draw, background) {
-		var screen = viewport.size(width, height, background);
+		var self = this,
+			screen = viewport.size(width, height, background),
+			realFpsTimeCounter = 0,
+			realFps = -1,
+			prevRealFps,
+			prevTime,
+			prev;
 
-		var realFpsTimeCounter = 0;
-		var realFps = -1;
-		var prevRealFps;
-		var prevTime;
-		var prev;
-
-		var drawFunction = function (time) {
-			if (time === undefined) {
-				return;
+		this.draw = function (time) {
+			if (!time) {
+				time = (new Date()).getTime();
 			}
-			var start = Date.now();
-			var x = time;
-			var elapsed = 0;
+			screen.console.frame_start();
+			var cp = viewport.getCenter();
+			screen.console.frame_log("S: " + cp[0] + "/" + cp[1]);
+			var start = Date.now(),
+				x = time,
+				elapsed = 0;
 			if (prev === undefined) {
 				prev = x;
 			} else {
@@ -642,7 +646,7 @@ var _local = (function () {
 				prev =  x;
 			}
 
-			screen.draw(_.bind(draw,{},screen));
+			screen.draw(_.bind(draw,self,screen));
 
 			screen.console.frame_log("Anim: " + Math.round(1000.0/elapsed, 2));
 			if (prevTime !== undefined) {
@@ -659,38 +663,35 @@ var _local = (function () {
 			if (prevRealFps !== undefined) {
 				screen.console.frame_log(" Real: " + prevRealFps);
 			}
-				
+			screen.console.frame_end();
 		};
 
-		return {
-			draw: function (time) {
-				screen.console.frame_start();
-				var cp = viewport.getCenter();
-				screen.console.frame_log("S: " + cp[0] + "/" + cp[1]);
-				drawFunction(time);
-				screen.console.frame_end();
-			},
-			move: function (x,y) {
-				//screen = viewport.move(x1,y1,x2,y2);
-				screen = viewport.move(x,y);
-			},
-			size: function(width,height) {
-				screen = viewport.size(width,height);
-			},
-			resize: function(width,height) {
-				screen = viewport.resize(width,height);
-			},
-			center: function (x,y) {
-				screen = viewport.center(x,y);
-			},
-			remove: function() {
-				viewport.remove();
-			},
-			onViewChange: function (callback) {
-				viewport.onViewChange(callback);
-			},
-			console: screen.console
+		this.requestFrame = function () {
+			console.log("requestFrame");
+			window.requestAnimFrame(self.draw);
 		};
+		this.move = function (x,y) {
+			screen = viewport.move(x,y);
+		};
+
+		this.size = function(width,height) {
+			screen = viewport.size(width,height);
+		};
+		this.resize = function(width,height) {
+			screen = viewport.resize(width,height);
+		};
+		this.center = function (x,y) {
+			screen = viewport.center(x,y);
+		};
+		this.remove = function() {
+			viewport.remove();
+		};
+		this.onViewChange = function (callback) {
+			viewport.onViewChange(callback);
+		};
+		this.console = screen.console;
+
+		this.requestFrame();
 	};
 
 
