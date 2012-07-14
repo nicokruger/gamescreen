@@ -193,12 +193,20 @@ gamescreen.screens.scrollingCanvas = function(where, game, width, height, backgr
         if (callbacks.mousemove) {
             $(canvas).mousemove(function (e) {
                 callbacks.mousemove(convertMouseToWorld(e));
+                e.stopPropogation();
+                e.preventDefault();
             });
         }
         if (callbacks.click) {
             $(canvas).click(function (e) {
                 callbacks.click(convertMouseToWorld(e));
+                e.stopPropogation();
+                e.preventDefault();
             });
+        }
+
+        if (callbacks.create) {
+            callbacks.create($(canvas));
         }
     }
     var ctx = canvas[0].getContext("2d"); // don't like the [0] subscript - some jQuery thing I don't understand?

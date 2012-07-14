@@ -9,6 +9,8 @@ $(function () {
     var s = 50;
     var dir = ["left", "down"];
     var grid = function (screen, c2s, ctx) {
+        //this.requestFrame();
+        
         gamescreen.util.grid(ctx, "rgb(0,0,0)", c2s, -WORLD, -WORLD, WORLD, WORLD, 100);
         
         ctx.fillStyle = "rgba(255,0,0,0.5)";
@@ -20,7 +22,6 @@ $(function () {
         ctx.closePath();
         ctx.fill();
 
-        screen.console.frame_log("Test");
 
     };
     
@@ -56,14 +57,10 @@ $(function () {
     var speedx = 0.1;
     var speedy = 0.1;
     var tick = function (time) {
-	if (!time) {
-		time = (new Date()).getTime();
-	}
-        gs1.draw(time);
-        gs2.draw(time);
+        if (!time) {
+            time = (new Date()).getTime();
+        }
         gs3.center(pos[0]+s/2, pos[1]+s/2);
-        gs3.draw(time);
-        gs4.draw(time);
         gs4.center(pos[0]+s/2, pos[1]+s/2);
 
         if (dir[0] === "left") {
@@ -94,10 +91,8 @@ $(function () {
             dir[1] = "down";
             speedy = Math.floor(Math.random() * 1);
         }
-
-
         window.requestAnimFrame(tick);
     };
-
     window.requestAnimFrame(tick);
+
 });
